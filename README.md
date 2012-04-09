@@ -1,11 +1,13 @@
-theme options settings for wordpress, still working on, but will be ready soon
+# NHP Theme Options #
 
-Simple Usage::
+Theme options framework which uses the  WP Settings API, still working on, but will be ready soon.
 
-Simply require the theme-options.php file in your themes functions.php file, like so:
+## Simple Usage ##
+
+Simply require the *theme-options.php* file in your themes *functions.php* file, like so:
 
 ```php
 require( dirname( __FILE__ ) . '/theme-options.php' );
 ```
 
-then change the settings as written in the theme-options.php file
+Then change the settings as written in the *theme-options.php* file.
