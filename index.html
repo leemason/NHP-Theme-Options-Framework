@@ -8,10 +8,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/css/docs.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -23,9 +20,50 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="http://twitter.github.com/bootstrap/assets/ico/apple-touch-icon-57-precomposed.png">
+    
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+    body{
+    	font-family: 'Open Sans', sans-serif;
+    }
+    .main{
+    	margin-top:30px;
+    }
+    #main-header{
+    	background:url("inc/browser.jpg");
+    	text-align:center;
+    	padding:70px 0px 40px 0px;
+    	border-bottom:1px solid #e9e9e9;
+    }
+    #main-header img{
+    	width:60%;
+    }
+    .download-info a{
+    	display:block;
+    	text-align:center;
+    	margin:10px 0px;
+    }
+    .bs-links{
+    	text-align:center;
+    }
+    .bs-links a,
+    .bs-links iframe{
+    	margin-right:20px;
+    }
+    @media (max-width: 979px) {
+    .main{
+    	margin-top:20px;
+    }
+    #main-header img{
+    	width:90%;
+    }
+    }
+
+    
+    </style>
   </head>
 
-  <body data-spy="scroll" data-target=".subnav" data-offset="50">
+  <body>
 
 
   <!-- Navbar
@@ -38,88 +76,74 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="./index.html">Bootstrap</a>
+          <a class="brand" href="./index.html">NHP Theme Options Framework</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active">
-                <a href="./index.html">Overview</a>
-              </li>
-              <li class="">
-                <a href="./scaffolding.html">Scaffolding</a>
-              </li>
-              <li class="">
-                <a href="./base-css.html">Base CSS</a>
-              </li>
-              <li class="">
-                <a href="./components.html">Components</a>
-              </li>
-              <li class="">
-                <a href="./javascript.html">Javascript plugins</a>
-              </li>
-              <li class="">
-                <a href="./less.html">Using LESS</a>
-              </li>
+              <li class="active"><a href="./index.html">Overview</a></li>
+              <li><a href="#">Features</a></li>
+              <li><a href="#">Extend</a></li>
               <li class="divider-vertical"></li>
-              <li class="">
-                <a href="./download.html">Customize</a>
-              </li>
-              <li class="">
-                <a href="./examples.html">Examples</a>
-              </li>
+              <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki">Wiki</a></li>
+              <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master">Download</a></li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="container">
+    
+    
+<header id="main-header"> 
+<div class="container header">   
+    <div class="row">
+    <div class="span12"><img src="inc/main.png"/></div>
+    </div>
+</div>
+</header>
+
+<div class="container main">
 
 <!-- Masthead
 ================================================== -->
-<header class="jumbotron masthead">
-  <div class="inner">
-    <h1>NHP Theme Options Framework</h1>
-    <p>Simple, easy to use, very extendable Options framework for WP themes.</p>
-    <p class="download-info">
-      <a href="https://github.com/leemason/NHP-Theme-Options-Framework" class="btn btn-primary btn-large">View project on GitHub</a>
-      <a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master" class="btn btn-large">Download Bootstrap <small>(v2.0.2)</small></a>
-    </p>
-  </div>
-
-  <div class="bs-links">
-    <ul class="quick-links">
-      <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master">Download with docs</a></li>
-      <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/issues?state=open">Submit issues</a></li>
-      <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki">Roadmap, changelog, and WIKI</a></li>
-    </ul>
+<nav class="row">
+<div class="span9">
+    <h1>Simple, easy to use, very extendable Options framework for WP themes.</h1>
+</div>
+<div class="span3 download-info">
+	<a href="https://github.com/leemason/NHP-Theme-Options-Framework" class="btn btn-info btn-large">View project on GitHub</a>
+	<a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master" class="btn btn-large">Download Framework <small>(v1.0.0)</small></a>
+</div>    
     
-    <ul class="quick-links">
-      <li>
-        <iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=leemason&repo=NHP-Theme-Options-Framework&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="112px" height="20px"></iframe>
-      </li>
-      <li>
-        <iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=leemason&repo=NHP-Theme-Options-Framework&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="98px" height="20px"></iframe>
-      </li>
-      <li>
-        <iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=leemason&repo=NHP-Theme-Options-Framework&type=follow&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="165px" height="20px"></iframe>
-      </li>
-      <li class="tweet-btn">
-        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://leemason.github.com/NHP-Theme-Options-Framework/" data-count="horizontal">Tweet</a>
-      </li>
-    </ul>
-  </div>
-</header>
+</nav>
 
-<hr class="soften">
+<hr/>
+   
+<div class="bs-links">
+<p>
+<a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master">Download with docs</a>
+<a href="https://github.com/leemason/NHP-Theme-Options-Framework/issues?state=open">Submit issues</a>
+<a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki">Roadmap, changelog, and WIKI</a>
+</p>
+
+<p>
+<iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=leemason&repo=NHP-Theme-Options-Framework&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="112px" height="20px"></iframe>
+<iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=leemason&repo=NHP-Theme-Options-Framework&type=fork&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="98px" height="20px"></iframe>
+<iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=leemason&repo=NHP-Theme-Options-Framework&type=follow&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="165px" height="20px"></iframe>
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://leemason.github.com/NHP-Theme-Options-Framework/" data-count="horizontal">Tweet</a>
+ </p>
+</div>
+    
+
+<hr/>
 
 
      <!-- Footer
       ================================================== -->
       <footer class="footer">
         <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>Designed and built with all the love in the world <a href="http://twitter.com/twitter" target="_blank">@twitter</a> by <a href="http://twitter.com/mdo" target="_blank">@mdo</a> and <a href="http://twitter.com/fat" target="_blank">@fat</a>.</p>
+        <p>Designed, coded and built by <a href="http://twitter.com/lee__mason" target="_blank">@lee__mason</a> with <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a> and <a href="http://wordpress.org" target="_blank">WordPress</a>.</p>
         <p>Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
-        <p>Icons from <a href="http://glyphicons.com">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <p>Icons from <a href="http://glyphicons.com" target="_blank">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
       </footer>
 
     </div><!-- /container -->
@@ -130,22 +154,7 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/jquery.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-transition.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-alert.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-modal.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-dropdown.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tab.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-tooltip.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-popover.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-button.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-collapse.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-carousel.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/bootstrap-typeahead.js"></script>
-    <script src="http://twitter.github.com/bootstrap/assets/js/application.js"></script>
-
+    <script src="bootstrap/js/bootstrap.min.js"></script>
 
   </body>
 </html>
