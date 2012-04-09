@@ -4,6 +4,8 @@ Simple Usage::
 
 Simply require the theme-options.php file in your themes functions.php file, like so:
 
-<pre>require( dirname( __FILE__ ) . '/theme-options.php' );</pre>
+```php
+require( dirname( __FILE__ ) . '/theme-options.php' );
+```
 
 then change the settings as written in the theme-options.php file
