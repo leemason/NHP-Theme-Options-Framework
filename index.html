@@ -30,14 +30,56 @@
     	margin-top:30px;
     }
     #main-header{
-    	background:url("inc/browser.jpg");
+    	margin-top:60px;
+    	background:url("inc/base-noise.jpg");
     	text-align:center;
-    	padding:70px 0px 40px 0px;
-    	border-bottom:1px solid #e9e9e9;
+    	padding:40px 0px 0px 0px;
+    	border:1px solid #e9e9e9;
+    	border-width: 1px 0px 1px 0px;
     }
     #main-header img{
-    	width:60%;
+    	width:90%;
     }
+    #main-heading{
+    	padding-top:20px;
+    }
+    
+    #intro{
+    	margin: 60px 0px;
+    }
+    #intro blockquote p{
+    	margin-bottom:10px;
+    }
+    
+    .heading h1{
+    	font-size: 40px;
+	    font-weight: 300;
+	    margin: 36px 0 27px;
+	    text-align: center;
+    }
+    .heading .h-byline{
+    	color: #999999;
+	    font-size: 18px;
+	    font-weight: 300;
+	    line-height: 24px;
+	    margin: -18px 0 27px;
+	    text-align: center;
+    }
+    
+    .main-icons-row{
+    	margin-top:20px;
+    }
+    .main-icons{
+    	float:left;
+    	margin:6px 6px 0px 0px;
+    }
+    h2.main-icons-header{
+    	font-size: 18px;
+    	font-weight:normal;
+    	margin-bottom:4px;
+    }
+    
+    
     .download-info a{
     	display:block;
     	text-align:center;
@@ -45,30 +87,46 @@
     }
     .bs-links{
     	text-align:center;
+    	margin:20px 0px;
     }
     .bs-links a,
     .bs-links iframe{
     	margin-right:20px;
     }
+    
+    .footer{
+    	margin-bottom:20px;
+    }
+    
+    
     @media (max-width: 979px) {
-    .main{
-    	margin-top:20px;
-    }
-    #main-header img{
-    	width:90%;
-    }
+    	
+	    .main{
+	    	margin-top:20px;
+	    }
+	    #main-header{
+	    	margin-top:0px;
+	    }
+	    #main-heading{
+	    	padding-bottom:20px;
+	    }
+	    .main-icons-row{
+	    	padding-top:20px;
+	    	border-top:1px solid #e9e9e9;
+	    }
+	    
     }
 
     
     </style>
   </head>
 
-  <body>
+  <body data-spy="scroll">
 
 
   <!-- Navbar
     ================================================== -->
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top" id="navbar">
       <div class="navbar-inner">
         <div class="container">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -79,11 +137,11 @@
           <a class="brand" href="./index.html">NHP Theme Options Framework</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active"><a href="./index.html">Overview</a></li>
-              <li><a href="#">Features</a></li>
-              <li><a href="#">Extend</a></li>
+              <li class="active"><a href="#main-header">Overview</a></li>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#screenshots">Screenshots</a></li>
+              <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki">Documentation</a></li>
               <li class="divider-vertical"></li>
-              <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki">Wiki</a></li>
               <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master">Download</a></li>
             </ul>
           </div>
@@ -96,7 +154,7 @@
 <header id="main-header"> 
 <div class="container header">   
     <div class="row">
-    <div class="span12"><img src="inc/main.png"/></div>
+    <div class="span12"><img src="inc/main1.png"/></div>
     </div>
 </div>
 </header>
@@ -106,7 +164,7 @@
 <!-- Masthead
 ================================================== -->
 <nav class="row">
-<div class="span9">
+<div class="span9" id="main-heading">
     <h1>Simple, easy to use, very extendable Options framework for WP themes.</h1>
 </div>
 <div class="span3 download-info">
@@ -115,6 +173,113 @@
 </div>    
     
 </nav>
+
+<hr/>
+
+<div id="intro">
+<blockquote>
+<p>There are many great theme option frameworks out there already, like the <a href="http://wptheming.com/options-framework-theme/" target="_blank">Options Framework</a>, and the <a href="http://upthemes.com/upthemes-framework/" target="_blank">UP Theme Framework</a>. Which is great, alot of this frameworks ideas, and functionality has been built upon the knowledge gained from those frameworks. But neither of them provided me with the extendability i needed/wanted. What i really wanted to do was merge those frameworks and add a little spice. I wanted a few specific things that have been the core reason for this framework.</p>
+<ul>
+<li><strong>Section Tabs</strong> - I wanted each settings section to have its own "tab" which can be clicked through.</li>
+<li><strong>Use the WordPress Core Settings API</strong> - I wanted the settings to use the core WordPress functions for creating/editing settings (no point reinventing the wheel).</li>
+<li><strong>Custom Error Handling</strong> - Inline with the custom tabs i wanted to be able to display error totals, and custom messages for each section/setting.</li>
+<li><strong>Easily Extendable</strong> - I wanted to be able to extend the framework for custom use applications. For settings fields and custom validation.</li>
+<li><strong>Customisable</strong> - I wanted to be able to customise the functionality, and style without hacking at the core.</li>
+</ul>
+<p>This is why the NHP Theme Options Framework has been created. Every function/action can be customised, with more hook points and configuration options being added with every update.</p>
+<small class="pull-right">Lee Mason - <a href="http://no-half-pixels.com" target="_blank">No Half Pixels</a></small>
+</blockquote>
+</div>
+
+<hr/>
+<div class="heading" id="features">
+<h1>Framework Features.</h1>
+<p class="h-byline">The NHP Theme Options Framework has an exhaustive list of features, which include...</p>
+</div>
+<div class="row">
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_009_magic.png" class="main-icons"/><h2 class="main-icons-header">Simple, Easy to use</h2>
+		<p>Simple Theme Options Framework for WordPress, Leaving you to concentrate on creating beutiful WP Themes.</p>
+	</div>
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_114_list.png" class="main-icons"/><h2 class="main-icons-header">Built In Field Types</h2>
+		<p>Contains many built in field types for easy use (all basic field types like text, checkbox, select, upload are built in).</p>
+	</div>
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_240_rotation_lock.png" class="main-icons"/><h2 class="main-icons-header">Built In Validation Methods</h2>
+		<p>Contains many built in validation methods for clean data saving (email, url, numeric, escape js, no html, html).</p>
+	</div>
+</div>
+
+<div class="row main-icons-row">
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_196_circle_exclamation_mark.png" class="main-icons"/><h2 class="main-icons-header">Custom Error Handling</h2>
+		<p>Using the Validation methods you can create custom error messages for each field type.</p>
+	</div>
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_023_cogwheels.png" class="main-icons"/><h2 class="main-icons-header">Multiple Option Sections</h2>
+		<p>Have as many, or as little sections as you need.</p>
+	</div>
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_195_circle_info.png" class="main-icons"/><h2 class="main-icons-header">Theme Info Section</h2>
+		<p>Want to show the theme info in your options? Its there by default! Or you can remove it, its all optional.</p>
+	</div>
+</div>
+
+<div class="row main-icons-row">
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_118_embed_close.png" class="main-icons"/><h2 class="main-icons-header">Extendable Field Classes</h2>
+		<p>Easily create custom field classes for use in your theme options. <a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki/Creating-a-Field-Class">View WIKI</a></p>
+	</div>
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_118_embed_close.png" class="main-icons"/><h2 class="main-icons-header">Extendable Validation Classes</h2>
+		<p>Want custom validation? Just use the extendable Validation Class methods. <a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki/Creating-a-Validation-Class">View WIKI</a></p>
+	</div>
+	<div class="span4">
+		<img src="inc/glyphicons/glyphicons_083_random.png" class="main-icons"/><h2 class="main-icons-header">Fully Customisable</h2>
+		<p>Many Hook points to customise the Framework to your requirements. <a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki/">View WIKI</a></p>
+	</div>
+</div>
+
+
+<hr/>
+<div class="heading" id="screenshots">
+<h1>Framework Screenshots.</h1>
+<p class="h-byline">The NHP Theme Options Framework has some slick default styling (all of which is customisable of course). Here is what it looks like in its default state.</p>
+</div>
+
+<div class="row">
+<div class="span12">
+<ul class="thumbnails example-sites">
+	<li class="span3">
+	<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Radio-Checkbox-Fields.png"></a>
+	</li>
+	<li class="span3">
+	<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Select-Fields.png"></a>
+	</li>
+	<li class="span3">
+		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Text-Fields.png"></a>
+	</li>
+	<li class="span3">
+		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Theme-Information-Section.png"></a>
+	</li>
+	<li class="span3">
+		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	</li>
+	<li class="span3">
+		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	</li>
+	<li class="span3">
+		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	</li>
+	<li class="span3">
+		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	</li>
+	
+</ul>
+</div>
+</div>
+
 
 <hr/>
    
@@ -132,8 +297,6 @@
 <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://leemason.github.com/NHP-Theme-Options-Framework/" data-count="horizontal">Tweet</a>
  </p>
 </div>
-    
-
 <hr/>
 
 
@@ -153,8 +316,14 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script>
+    jQuery(document).ready(function(){
+    	jQuery('#navbar').scrollspy({offset: 0});
+    });
+    </script>
 
   </body>
 </html>
