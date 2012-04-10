@@ -1,6 +1,6 @@
 # NHP Theme Options #
 
-Theme options framework which uses the  [WordPress Settings API](http://codex.wordpress.org/Settings_API "WordPress Settings API"), Custom Error/Validation Handling, Custom Field/Validation Types (which are easily extendable).
+Theme options framework which uses the  [WordPress Settings API](http://codex.wordpress.org/Settings_API "WordPress Settings API"), Custom Error/Validation Handling, Custom Field/Validation Types (which are easily extendable), and import/export functionality.
 
 ## Simple Usage ##
 
@@ -23,5 +23,6 @@ Then change the settings as written in the **theme-options.php** file.
 * Easily extendable by creating Validation Classes (more in the [WIKI](https://github.com/leemason/NHP-Theme-Options-Framework/wiki "WIKI"))
 * Custom Validation error handling, including error counts for each section, and custom styling for error fields
 * Multiple Hook Points for customisation
+* Import / Export Functionality
 * Easily add page help through the class
 * Much more
