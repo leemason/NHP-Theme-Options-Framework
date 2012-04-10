@@ -9,6 +9,9 @@
 
     <!-- Le styles -->
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Fancybox -->
+    <link rel="stylesheet" href="fancybox/source/jquery.fancybox.css" type="text/css" media="screen" />
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -249,31 +252,37 @@
 </div>
 
 <div class="row">
-<div class="span12">
+<div class="span10 offset1">
 <ul class="thumbnails example-sites">
-	<li class="span3">
-	<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Radio-Checkbox-Fields.png"></a>
+	<li class="span2">
+	<a class="thumbnail fancybox" rel="gallery" href="inc/shots/1-NHP-Text-Fields.png" title="Framework Text Fields"><img alt="" src="inc/shots/thumbs/1-NHP-Text-Fields.png"></a>
 	</li>
-	<li class="span3">
-	<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Select-Fields.png"></a>
+	<li class="span2">
+	<a class="thumbnail fancybox" rel="gallery" href="inc/shots/2-NHP-Checkbox-Radio-Fields.png" title="Framework Checkbox / Radio Fields"><img alt="" src="inc/shots/thumbs/2-NHP-Checkbox-Radio-Fields.png"></a>
 	</li>
-	<li class="span3">
-		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Text-Fields.png"></a>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/3-NHP-Select-Fields.png" title="Framework Select Fields"><img alt="" src="inc/shots/thumbs/3-NHP-Select-Fields.png"></a>
 	</li>
-	<li class="span3">
-		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Theme-Information-Section.png"></a>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/4-NHP-Custom-Fields.png" title="Framework Custom Fields"><img alt="" src="inc/shots/thumbs/4-NHP-Custom-Fields.png"></a>
 	</li>
-	<li class="span3">
-		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/5-NHP-Novalue-Fields.png" title="Framework No Value Fields"><img alt="" src="inc/shots/thumbs/5-NHP-Novalue-Fields.png"></a>
 	</li>
-	<li class="span3">
-		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/6-NHP-Import-Export.png" title="Framework Import / Export Options"><img alt="" src="inc/shots/thumbs/6-NHP-Import-Export.png"></a>
 	</li>
-	<li class="span3">
-		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/7-NHP-Docs.png" title="Framework Docs"><img alt="" src="inc/shots/thumbs/7-NHP-Docs.png"></a>
 	</li>
-	<li class="span3">
-		<a class="thumbnail" href="#"><img alt="" src="./inc/screenshots/thumbs/Validation-Errors.png"></a>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/8-NHP-Theme-Info.png" title="Framework Theme Info Section"><img alt="" src="inc/shots/thumbs/8-NHP-Theme-Info.png"></a>
+	</li>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/9-NHP-Dev-Mode.png" title="Framework Dev Mode Section"><img alt="" src="inc/shots/thumbs/9-NHP-Dev-Mode.png"></a>
+	</li>
+	<li class="span2">
+		<a class="thumbnail fancybox" rel="gallery" href="inc/shots/10-NHP-Messages.png" title="Framework Custom Save, Error, Imported, Edited Messages"><img alt="" src="inc/shots/thumbs/10-NHP-Messages.png"></a>
 	</li>
 	
 </ul>
@@ -304,7 +313,7 @@
       ================================================== -->
       <footer class="footer">
         <p class="pull-right"><a href="#">Back to top</a></p>
-        <p>Designed, coded and built by <a href="http://twitter.com/lee__mason" target="_blank">@lee__mason</a> with <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a> and <a href="http://wordpress.org" target="_blank">WordPress</a>.</p>
+        <p>Designed, coded and built by <a href="http://twitter.com/lee__mason" target="_blank">@lee__mason</a> with <a href="http://twitter.github.com/bootstrap/" target="_blank">Twitter Bootstrap</a>, <a href="http://fancyapps.com/fancybox/" target="_blank">Fancybox</a> and <a href="http://wordpress.org" target="_blank">WordPress</a>.</p>
         <p>Code licensed under the <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
         <p>Icons from <a href="http://glyphicons.com" target="_blank">Glyphicons Free</a>, licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
       </footer>
@@ -319,9 +328,11 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="fancybox/source/jquery.fancybox.pack.js"></script>
     <script>
     jQuery(document).ready(function(){
     	jQuery('#navbar').scrollspy({offset: 0});
+    	jQuery('.fancybox').fancybox({margin: [70, 20, 20, 20],helpers:{title :{type : 'over'}}});
     });
     </script>
 
