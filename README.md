@@ -1,10 +1,6 @@
 # NHP Theme Options #
 
-<<<<<<< HEAD
 Theme options framework which uses the  [WordPress Settings API](http://codex.wordpress.org/Settings_API "WordPress Settings API"), Custom Error/Validation Handling, Custom Field/Validation Types (which are easily extendable).
-=======
-Theme options framework which uses the  WP Settings API, Custom Error/Validation Handling, Custom Field/Validation Types (which are easily extendable).
->>>>>>> Updated Readme and added Screenshots Folder
 
 ## Simple Usage ##
 
@@ -18,7 +14,6 @@ Then change the settings as written in the **theme-options.php** file.
 
 ## Features ##
 
-<<<<<<< HEAD
 * Uses the [WordPress Settings API](http://codex.wordpress.org/Settings_API "WordPress Settings API")
 * Multiple built in field types: **text | textarea | tinymce | checkbox | multi_checkbox | radio | radio_img | select | multi_select | color | date | upload**
 * Multple layout field types: **divider | info**
@@ -26,15 +21,6 @@ Then change the settings as written in the **theme-options.php** file.
 * Easily extendable by creating Field Classes (more info in the [WIKI](https://github.com/leemason/NHP-Theme-Options-Framework/wiki "WIKI"))
 * Built in Validation Classes: **email | url | numeric | html | html_custom | no_html | js**
 * Easily extendable by creating Validation Classes (more in the [WIKI](https://github.com/leemason/NHP-Theme-Options-Framework/wiki "WIKI"))
-=======
-* Uses the WordPress Settings API
-* Multiple built in field types: text|textarea|tinymce|checkbox|multi_checkbox|radio|radio_img|select|multi_select|color|date|upload
-* Multple layout field types: divider|info
-* Fields can be over-ridden with a callback function, for custom field types
-* Easily extendable by creating Field Classes (more info in the WIKI)
-* Built in Validation Classes: email|url|numeric|html|html_custom|no_html|js
-* Easily extendable by creating Validation Classes (more in the WIKI)
->>>>>>> Updated Readme and added Screenshots Folder
 * Custom Validation error handling, including error counts for each section, and custom styling for error fields
 * Multiple Hook Points for customisation
 * Easily add page help through the class

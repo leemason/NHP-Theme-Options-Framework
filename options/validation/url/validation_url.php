@@ -12,7 +12,7 @@ class NHP_Validation_url extends NHP_Options{
 		
 		parent::__construct();
 		$this->field = $field;
-		$this->field['msg'] = __('You must provide a valid URL for this option.', 'nhp-opts');
+		$this->field['msg'] = (isset($this->field['msg']))?$this->field['msg']:__('You must provide a valid URL for this option.', 'nhp-opts');
 		$this->value = $value;
 		$this->current = $current;
 		$this->validate();

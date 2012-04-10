@@ -36,5 +36,26 @@ class NHP_Options_date extends NHP_Options{
 		
 	}//function
 	
+	
+	
+	/**
+	 * Enqueue Function.
+	 *
+	 * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
+	 *
+	 * @since NHP_Options 1.0
+	*/
+	function enqueue(){
+		
+		wp_enqueue_script(
+			'nhp-opts-field-date-js', 
+			$this->args['theme_url'].'options/fields/date/field_date.js', 
+			array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker'),
+			time(),
+			true
+		);
+		
+	}//function
+	
 }//class
 ?>

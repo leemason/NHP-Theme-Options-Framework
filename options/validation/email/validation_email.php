@@ -12,7 +12,7 @@ class NHP_Validation_email extends NHP_Options{
 		
 		parent::__construct();
 		$this->field = $field;
-		$this->field['msg'] = __('You must provide a valid email for this option.', 'nhp-opts');
+		$this->field['msg'] = (isset($this->field['msg']))?$this->field['msg']:__('You must provide a valid email for this option.', 'nhp-opts');
 		$this->value = $value;
 		$this->current = $current;
 		$this->validate();

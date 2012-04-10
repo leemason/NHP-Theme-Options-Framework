@@ -41,5 +41,25 @@ class NHP_Options_color extends NHP_Options{
 		
 	}//function
 	
+	
+	/**
+	 * Enqueue Function.
+	 *
+	 * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
+	 *
+	 * @since NHP_Options 1.0
+	*/
+	function enqueue(){
+		
+		wp_enqueue_script(
+			'nhp-opts-field-color-js', 
+			$this->args['theme_url'].'options/fields/color/field_color.js', 
+			array('jquery', 'farbtastic'),
+			time(),
+			true
+		);
+		
+	}//function
+	
 }//class
 ?>

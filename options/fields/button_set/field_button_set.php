@@ -39,9 +39,33 @@ class NHP_Options_button_set extends NHP_Options{
 				
 			}//foreach
 			
-		echo ($this->field['desc'] != '')?'<span class="description">'.$this->field['desc'].'</span>':'';
+		echo ($this->field['desc'] != '')?'&nbsp;&nbsp;<span class="description">'.$this->field['desc'].'</span>':'';
 		
 		echo '</fieldset>';
+		
+	}//function
+	
+	
+	
+	/**
+	 * Enqueue Function.
+	 *
+	 * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
+	 *
+	 * @since NHP_Options 1.0
+	*/
+	function enqueue(){
+		
+		wp_enqueue_style('nhp-opts-jquery-ui-css');
+
+		wp_enqueue_script(
+			'nhp-opts-field-button_set-js', 
+			$this->args['theme_url'].'options/fields/button_set/field_button_set.js', 
+			array('jquery', 'jquery-ui-core'),
+			time(),
+			true
+		);
+
 		
 	}//function
 	

@@ -13,6 +13,9 @@ $args = array();
 //Set it to dev mode to view the class settings/info in the form - default is false
 $args['dev_mode'] = true;
 
+//Remove the default stylesheet? make sure you enqueue another one all the page will look whack!
+//$args['stylesheet_override'] = true;
+
 //Add HTML before the form
 $args['intro_text'] = __('<p>This is the HTML which can be displayed before the form, it isnt required, but more info is always better. Anything goes in terms of markup here, any HTML.</p>', 'nhp-opts');
 
@@ -33,6 +36,9 @@ $args['share_icons']['linked_in'] = array(
 
 //Set this to false to stop the Theme Information tab from being displayed - default functionality is to allow
 //$args['show_theme_info'] = false;
+
+//Choose to disable the import/export feature
+//$args['show_import_export'] = false;
 
 //Choose a custom option name for your theme options, the default is the theme name in lowercase with spaces replaced by underscores
 //$args['opt_name'] = $defaults['theme_data']['short_name'];
@@ -77,6 +83,7 @@ $sections[] = array(
 				//Lets leave this as a blank section, no options just some intro text set above.
 				'fields' => array()
 				);
+
 				
 $sections[] = array(
 				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_107_text_resize.png',
@@ -91,6 +98,7 @@ $sections[] = array(
 						'sub_desc' => __('This is a little space under the Field Title in the Options table, additonal info is good in here.', 'nhp-opts'),
 						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
 						//'validate' => '', //builtin validation includes: email|html|html_custom|no_html|js|numeric|url
+						//'msg' => 'custom error message', //override the default validation error message for specific fields
 						//'std' => '', //This is a default value, used to set the options on theme activation, and if the user hits the Reset to defaults Button
 						//'class' => '' //Set custom classes for elements if you want to do something a little different - default is "regular-text"
 						),
@@ -101,6 +109,7 @@ $sections[] = array(
 						'sub_desc' => __('This is a little space under the Field Title in the Options table, additonal info is good in here.', 'nhp-opts'),
 						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
 						'validate' => 'email',
+						'msg' => 'custom error message',
 						'std' => 'test@test.com'
 						),
 					array(
@@ -275,9 +284,18 @@ $sections[] = array(
 						'title' => __('Upload Option', 'nhp-opts'), 
 						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
 						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts')
-						)									
+						),
+					array(
+						'id' => 'custom_callback',
+						//'type' => 'nothing',//doesnt need to be called for callback fields
+						'title' => __('Custom Field Callback', 'nhp-opts'), 
+						'sub_desc' => __('This is a completely unique field type', 'nhp-opts'),
+						'desc' => __('This is created with a callback function, so anything goes in this field. Make sure to define the function though.', 'nhp-opts'),
+						'callback' => 'my_custom_field'
+						)								
 					)
 				);
+
 $sections[] = array(
 				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_093_crop.png',
 				'title' => __('Non Value Fields', 'nhp-opts'),
@@ -318,7 +336,17 @@ $sections[] = array(
 
 new NHP_Options($sections, $args);
 
+/*
+ * 
+ * Custom function for the callback referenced above
+ *
+ */
+function my_custom_field($field, $value){
+	
+	print_r($field);
+	print_r($value);
 
+}//function
 
 
 
@@ -335,8 +363,9 @@ new NHP_Options($sections, $args);
  */
  
 //apply_filters('nhp-opts-page-icon-id', 'icon-themes') - filter div id for page icon
-//do_action('nhp-opts-enqueue'); - load page speicfic js and css - use this in custom field classes to register custom js/css
+//do_action('nhp-opts-enqueue'); - load page speicfic js and css - use this to register custom js/css
 //do_action('nhp-opts-load-page', $screen); - hooks into the load-page hook
+//do_action('nhp-opts-admin-head', $this); - allows you to hook into the pages head section
 //do_action('nhp-opts-page-before-form'); - before form
 //do_action('nhp-opts-before-field', $field(array), $value); - before each field
 //do_action('nhp-opts-after-field', $field(array), $value); - after each field

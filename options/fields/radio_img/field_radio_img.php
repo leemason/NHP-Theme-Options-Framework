@@ -51,5 +51,26 @@ class NHP_Options_radio_img extends NHP_Options{
 		
 	}//function
 	
+	
+	
+	/**
+	 * Enqueue Function.
+	 *
+	 * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
+	 *
+	 * @since NHP_Options 1.0
+	*/
+	function enqueue(){
+		
+		wp_enqueue_script(
+			'nhp-opts-field-radio_img-js', 
+			$this->args['theme_url'].'options/fields/radio_img/field_radio_img.js', 
+			array('jquery'),
+			time(),
+			true
+		);
+		
+	}//function
+	
 }//class
 ?>
