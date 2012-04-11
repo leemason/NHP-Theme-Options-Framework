@@ -27,7 +27,7 @@ class NHP_Options{
 	function __construct($sections = array(), $args = array()){
 		
 		$this->framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
-		$this->framework_version = '1.0.0';
+		$this->framework_version = '1.0.1';
 		
 		
 		//get field classes
@@ -91,6 +91,9 @@ class NHP_Options{
 		//setup the errors array for later
 		$this->errors = array();
 		
+		//get the options for use later on
+		$this->options = get_option($this->args['opt_name']);
+		
 		//set option with defaults
 		add_action('admin_init', array(&$this, '_set_default_options'));
 		
@@ -101,9 +104,10 @@ class NHP_Options{
 		//register setting
 		add_action('admin_init', array(&$this, '_register_setting'));
 		
-		
+		//add the js for the error handling before the form
 		add_action('nhp-opts-page-before-form', array(&$this, '_errors_js'), 1);
 		
+		//hook into the load page hook for downloading the exported settings
 		add_action('nhp-opts-load-page', array(&$this, '_download_options'));
 		
 		
@@ -122,6 +126,32 @@ class NHP_Options{
 	}//function
 	
 	
+	/**
+	 * ->get(); This is used to return and option value from the options array
+	 *
+	 * @since NHP_Options 1.0.1
+	 *
+	 * @param $array $args Arguments. Class constructor arguments.
+	*/
+	function get($opt_name){
+		return $this->options[$opt_name];
+	}//function
+	
+	/**
+	 * ->show(); This is used to echo and option value from the options array
+	 *
+	 * @since NHP_Options 1.0.1
+	 *
+	 * @param $array $args Arguments. Class constructor arguments.
+	*/
+	function show($opt_name){
+		$option = $this->get($opt_name);
+		if(!is_array($option)){
+			echo $option;
+		}
+	}//function
+	
+	
 	
 	/**
 	 * Get Fields - requires all the built in classes for field use
@@ -130,6 +160,8 @@ class NHP_Options{
 	 *
 	*/
 	function get_fields(){
+		
+		//V1.0.0
 		require_once('fields/text/field_text.php');
 		require_once('fields/textarea/field_textarea.php');
 		require_once('fields/editor/field_editor.php');
@@ -146,6 +178,21 @@ class NHP_Options{
 		require_once('fields/info/field_info.php');
 		require_once('fields/divide/field_divide.php');
 		
+		//V1.0.1
+		require_once('fields/pages_select/field_pages_select.php');
+		require_once('fields/pages_multi_select/field_pages_multi_select.php');
+		require_once('fields/posts_select/field_posts_select.php');
+		require_once('fields/posts_multi_select/field_posts_multi_select.php');
+		require_once('fields/tags_select/field_tags_select.php');
+		require_once('fields/tags_multi_select/field_tags_multi_select.php');
+		require_once('fields/cats_select/field_cats_select.php');
+		require_once('fields/cats_multi_select/field_cats_multi_select.php');
+		require_once('fields/menu_select/field_menu_select.php');
+		require_once('fields/menu_location_select/field_menu_location_select.php');
+		require_once('fields/post_type_select/field_post_type_select.php');
+		require_once('fields/checkbox_hide_below/field_checkbox_hide_below.php');
+		require_once('fields/select_hide_below/field_select_hide_below.php');
+		
 		do_action('nhp-opts-get-fields');
 	}//function
 	
@@ -157,6 +204,8 @@ class NHP_Options{
 	 *
 	*/
 	function get_validation(){
+		
+		//V1.0.0
 		require_once('validation/email/validation_email.php');
 		require_once('validation/no_html/validation_no_html.php');
 		require_once('validation/html/validation_html.php');
@@ -165,6 +214,14 @@ class NHP_Options{
 		require_once('validation/numeric/validation_numeric.php');
 		require_once('validation/js/validation_js.php');
 		
+		//V1.0.1
+		require_once('validation/color/validation_color.php');
+		require_once('validation/date/validation_date.php');
+		require_once('validation/comma_numeric/validation_comma_numeric.php');
+		require_once('validation/no_special_chars/validation_no_special_chars.php');
+		require_once('validation/preg_replace/validation_preg_replace.php');
+		require_once('validation/str_replace/validation_str_replace.php');
+
 		do_action('nhp-opts-get-validation');
 	}//function
 	
@@ -180,12 +237,18 @@ class NHP_Options{
 		$defaults = array();
 		
 		foreach($this->sections as $k => $section){
+			
+			if(isset($section['fields'])){
 		
-			foreach($section['fields'] as $fieldk => $field){
-				
-					$defaults[$field['id']] = $field['std'];
-				
-			}//foreach
+				foreach($section['fields'] as $fieldk => $field){
+					
+					if(isset($field['std'])){$field['std'] = '';}
+						
+						$defaults[$field['id']] = $field['std'];
+					
+				}//foreach
+			
+			}//if(isset($section['fields'])){
 			
 		}//foreach
 		
@@ -268,15 +331,23 @@ class NHP_Options{
 		
 		foreach($this->sections as $k => $section){
 			
-			foreach($section['fields'] as $fieldk => $field){
+			if(isset($section['fields'])){
 				
-				$field_class = 'NHP_Options_'.$field['type'];
-		
-				if(class_exists($field_class) && method_exists($field_class, 'enqueue')){
-					$field_class::enqueue();
-				}//if
+				foreach($section['fields'] as $fieldk => $field){
+					
+					if(isset($field['type'])){
+					
+						$field_class = 'NHP_Options_'.$field['type'];
 				
-			}//foreach
+						if(class_exists($field_class) && method_exists($field_class, 'enqueue')){
+							$field_class::enqueue();
+						}//if
+						
+					}//if type
+					
+				}//foreach
+			
+			}//if fields
 			
 		}//foreach
 			
@@ -298,6 +369,7 @@ class NHP_Options{
 			header('Cache-Control: must-revalidate');
 			header('Pragma: public');
 			$backup_options = get_option($this->args['opt_name']);
+			$backup_options = $this->options;
 			$backup_options['nhp-opts-backup'] = '1';
 			echo '###'.base64_encode(serialize($backup_options)).'###';
 			exit;
@@ -368,13 +440,22 @@ class NHP_Options{
 			
 			add_settings_section($k.'_section', $section['title'], array(&$this, '_section_desc'), $k.'_section_group');
 			
-			foreach($section['fields'] as $fieldk => $field){
-				
-				$th = (isset($field['sub_desc']))?$field['title'].'<span class="description">'.$field['sub_desc'].'</span>':$field['title'];
-				
-				add_settings_field($fieldk.'_field', $th, array(&$this,'_field_input'), $k.'_section_group', $k.'_section', $field); // checkbox
-				
-			}//foreach
+			if(isset($section['fields'])){
+			
+				foreach($section['fields'] as $fieldk => $field){
+					
+					if(isset($field['title'])){
+					
+						$th = (isset($field['sub_desc']))?$field['title'].'<span class="description">'.$field['sub_desc'].'</span>':$field['title'];
+					}else{
+						$th = '';
+					}
+					
+					add_settings_field($fieldk.'_field', $th, array(&$this,'_field_input'), $k.'_section_group', $k.'_section', $field); // checkbox
+					
+				}//foreach
+			
+			}//if(isset($section['fields'])){
 			
 		}//foreach
 		
@@ -391,6 +472,8 @@ class NHP_Options{
 	*/
 	function _validate_options($plugin_options){
 		
+		set_transient('nhp-opts-saved', '1', 1000 );
+		
 		if(!empty($plugin_options['import']) && $plugin_options['import_code'] != ''){
 			$imported_options = unserialize(base64_decode($plugin_options['import_code']));
 			if(is_array($imported_options) && isset($imported_options['nhp-opts-backup']) && $imported_options['nhp-opts-backup'] == '1'){
@@ -406,21 +489,20 @@ class NHP_Options{
 		}//if set defaults
 		
 		
-		//get current options
-		$options = get_option($this->args['opt_name']);
-		
 		//validate fields (if needed)
-		$plugin_options = $this->_validate_values($plugin_options, $options);
+		$plugin_options = $this->_validate_values($plugin_options, $this->options);
 		
 		if($this->errors){
 			set_transient('nhp-opts-errors', $this->errors, 1000 );
+			
 		}//if errors
 		
-		do_action('nhp-opts-options-validate', $plugin_options, $options);
+		do_action('nhp-opts-options-validate', $plugin_options, $this->options);
 		
 		
 		unset($plugin_options['defaults']);
 		unset($plugin_options['import']);
+		unset($plugin_options['import_code']);
 		
 		return $plugin_options;	
 	
@@ -438,21 +520,52 @@ class NHP_Options{
 	function _validate_values($plugin_options, $options){
 		foreach($this->sections as $k => $section){
 			
-			foreach($section['fields'] as $fieldk => $field){
-				$field['section_id'] = $k;
-
-				if(isset($field['validate']) && $plugin_options[$field['id']] != ''){
-					$validate = 'NHP_Validation_'.$field['validate'];
-					if(class_exists($validate)){
-						$validation = new $validate($field, $plugin_options[$field['id']], $options[$field['id']]);
-						$plugin_options[$field['id']] = $validation->value;
-						if($validation->error){
-							$this->errors[] = $validation->error;
+			if(isset($section['fields'])){
+			
+				foreach($section['fields'] as $fieldk => $field){
+					$field['section_id'] = $k;
+					
+					if(!isset($plugin_options[$field['id']]) || $plugin_options[$field['id']] == ''){
+						continue;
+					}
+					
+					//force validate of custom filed types
+					
+					if(isset($field['type']) && !isset($field['validate'])){
+						if($field['type'] == 'color'){
+							$field['validate'] = 'color';
+						}elseif($field['type'] == 'date'){
+							$field['validate'] = 'date';
 						}
 					}//if
-				}//if
-				
-			}//foreach
+	
+					if(isset($field['validate'])){
+						$validate = 'NHP_Validation_'.$field['validate'];
+						if(class_exists($validate)){
+							$validation = new $validate($field, $plugin_options[$field['id']], $options[$field['id']]);
+							$plugin_options[$field['id']] = $validation->value;
+							if(isset($validation->error)){
+								$this->errors[] = $validation->error;
+							}
+							continue;
+						}//if
+					}//if
+					
+					
+					if(isset($field['validate_callback']) && function_exists($field['validate_callback'])){
+						
+						$callbackvalues = call_user_func($field['validate_callback'], $field, $plugin_options[$field['id']], $options[$field['id']]);
+						$plugin_options[$field['id']] = $callbackvalues['value'];
+						if(isset($callbackvalues['error'])){
+							$this->errors[] = $callbackvalues['error'];
+						}//if
+						
+					}//if
+					
+					
+				}//foreach
+			
+			}//if(isset($section['fields'])){
 			
 		}//foreach
 		return $plugin_options;
@@ -487,13 +600,13 @@ class NHP_Options{
 					echo '<div class="clear"></div><!--clearfix-->';
 				echo '</div>';
 				
-					if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true'){
-						$options = get_option($this->args['opt_name']);
-						if(isset($options['imported']) && $options['imported'] == 1){
+					if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-saved') == '1'){
+						if(isset($this->options['imported']) && $this->options['imported'] == 1){
 							echo '<div id="nhp-opts-imported">'.__('<strong>Settings Imported!</strong>', 'nhp-opts').'</div>';
 						}else{
 							echo '<div id="nhp-opts-save">'.__('<strong>Settings Saved!</strong>', 'nhp-opts').'</div>';
 						}
+						delete_transient('nhp-opts-saved');
 					}
 					echo '<div id="nhp-opts-save-warn">'.__('<strong>Settings have changed!, you should save them!</strong>', 'nhp-opts').'</div>';
 					echo '<div id="nhp-opts-field-errors">'.__('<strong><span></span> error(s) were found!</strong>', 'nhp-opts').'</div>';
@@ -575,7 +688,7 @@ class NHP_Options{
 							echo '</div>';
 							
 								echo '<p><a href="javascript:void(0);" id="nhp-opts-export-code-copy" class="button-secondary">Copy</a> <a href="'.add_query_arg(array('page' => $this->args['page_slug'], 'action' => 'download_options'), 'themes.php').'" id="nhp-opts-export-code-dl" class="button-primary">Download</a></p>';
-								$backup_options = get_option($this->args['opt_name']);
+								$backup_options = $this->options;
 								$backup_options['nhp-opts-backup'] = '1';
 								$encoded_options = '###'.base64_encode(serialize($backup_options)).'###';
 								echo '<textarea class="large-text" id="nhp-opts-export-code" rows="8">';print_r($encoded_options);echo '</textarea>';
@@ -653,10 +766,11 @@ class NHP_Options{
 	*/	
 	function _errors_js(){
 		
-		if(get_transient('nhp-opts-errors')){
+		if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-errors')){
 				$errors = get_transient('nhp-opts-errors');
-				
+				$section_errors = array();
 				foreach($errors as $error){
+					$section_errors[$error['section_id']] = (isset($section_errors[$error['section_id']]))?$section_errors[$error['section_id']]:0;
 					$section_errors[$error['section_id']]++;
 				}
 				
@@ -672,7 +786,7 @@ class NHP_Options{
 						
 						foreach($errors as $error){
 							echo 'jQuery("#'.$error['id'].'").attr("style", "border-color: #B94A48;");';
-							echo 'jQuery("#'.$error['id'].'").parent("td").append("<span class=\"nhp-opts-th-error\">'.$error['msg'].'</span>");';
+							echo 'jQuery("#'.$error['id'].'").closest("td").append("<span class=\"nhp-opts-th-error\">'.$error['msg'].'</span>");';
 						}
 					echo '});';
 				echo '</script>';
@@ -708,22 +822,27 @@ class NHP_Options{
 	*/
 	function _field_input($field){
 		
-		$options = get_option($this->args['opt_name']);
 		
 		if(isset($field['callback']) && function_exists($field['callback'])){
-			do_action('nhp-opts-before-field', $field, $options[$field['id']]);
-			call_user_func($field['callback'], $field, $options[$field['id']]);
-			do_action('nhp-opts-after-field', $field, $options[$field['id']]);
+			$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
+			do_action('nhp-opts-before-field', $field, $value);
+			call_user_func($field['callback'], $field, $value);
+			do_action('nhp-opts-after-field', $field, $value);
 			return;
 		}
 		
-		$field_class = 'NHP_Options_'.$field['type'];
-		
-		if(class_exists($field_class)){
-			do_action('nhp-opts-before-field', $field, $options[$field['id']]);
-			new $field_class($field, $options[$field['id']]);
-			do_action('nhp-opts-after-field', $field, $options[$field['id']]);
-		}//if
+		if(isset($field['type'])){
+			
+			$field_class = 'NHP_Options_'.$field['type'];
+			
+			if(class_exists($field_class)){
+				$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
+				do_action('nhp-opts-before-field', $field, $value);
+				new $field_class($field, $value);
+				do_action('nhp-opts-after-field', $field, $value);
+			}//if
+			
+		}//if $field['type']
 		
 	}//function
 

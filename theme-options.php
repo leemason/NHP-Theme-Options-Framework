@@ -1,5 +1,8 @@
 <?php
-require( dirname( __FILE__ ) . '/options/options.php' );
+
+if(!class_exists('NHP_Options')){
+	require( dirname( __FILE__ ) . '/options/options.php' );
+}
 $args = array();
 /*
  *
@@ -79,9 +82,9 @@ $sections[] = array(
 				'desc' => __('<p class="description">This is the description field for the Section. HTML is allowed</p>', 'nhp-opts'),
 				//all the glyphicons are included in the options folder, so you can hook into them, or link to your own custom ones.
 				//You dont have to though, leave it blank for default.
-				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_062_attach.png',
+				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_062_attach.png'
 				//Lets leave this as a blank section, no options just some intro text set above.
-				'fields' => array()
+				//'fields' => array()
 				);
 
 				
@@ -132,6 +135,54 @@ $sections[] = array(
 						'class' => 'small-text'
 						),
 					array(
+						'id' => 'comma_numeric',
+						'type' => 'text',
+						'title' => __('Text Option - Comma Numeric Validated', 'nhp-opts'),
+						'sub_desc' => __('This must be a comma seperated string of numerical values.', 'nhp-opts'),
+						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
+						'validate' => 'comma_numeric',
+						'std' => '0',
+						'class' => 'small-text'
+						),
+					array(
+						'id' => 'no_special_chars',
+						'type' => 'text',
+						'title' => __('Text Option - No Special Chars Validated', 'nhp-opts'),
+						'sub_desc' => __('This must be a alpha numeric only.', 'nhp-opts'),
+						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
+						'validate' => 'no_special_chars',
+						'std' => '0'
+						),
+					array(
+						'id' => 'str_replace',
+						'type' => 'text',
+						'title' => __('Text Option - Str Replace Validated', 'nhp-opts'),
+						'sub_desc' => __('You decide.', 'nhp-opts'),
+						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
+						'validate' => 'str_replace',
+						'str' => array('search' => ' ', 'replacement' => 'thisisaspace'),
+						'std' => '0'
+						),
+					array(
+						'id' => 'preg_replace',
+						'type' => 'text',
+						'title' => __('Text Option - Preg Replace Validated', 'nhp-opts'),
+						'sub_desc' => __('You decide.', 'nhp-opts'),
+						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
+						'validate' => 'preg_replace',
+						'preg' => array('pattern' => '/[^a-zA-Z_ -]/s', 'replacement' => 'no numbers'),
+						'std' => '0'
+						),
+					array(
+						'id' => 'custom_validate',
+						'type' => 'text',
+						'title' => __('Text Option - Custom Callback Validated', 'nhp-opts'),
+						'sub_desc' => __('You decide.', 'nhp-opts'),
+						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
+						'validate_callback' => 'validate_callback_function',
+						'std' => '0'
+						),
+					array(
 						'id' => '5',
 						'type' => 'textarea',
 						'title' => __('Textarea Option - No HTML Validated', 'nhp-opts'), 
@@ -157,7 +208,7 @@ $sections[] = array(
 						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
 						'validate' => 'html_custom',
 						'std' => 'Some HTML is allowed in here.',
-						'allowed_html' => array() //see http://codex.wordpress.org/Function_Reference/wp_kses
+						'allowed_html' => array('') //see http://codex.wordpress.org/Function_Reference/wp_kses
 						),
 					array(
 						'id' => '8',
@@ -286,6 +337,113 @@ $sections[] = array(
 						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts')
 						),
 					array(
+						'id' => 'pages_select',
+						'type' => 'pages_select',
+						'title' => __('Pages Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a drop down menu of all the sites pages.', 'nhp-opts'),
+						'args' => array()//uses get_pages
+						),
+					array(
+						'id' => 'pages_multi_select',
+						'type' => 'pages_multi_select',
+						'title' => __('Pages Multiple Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a Multi Select menu of all the sites pages.', 'nhp-opts'),
+						'args' => array('number' => '5')//uses get_pages
+						),
+					array(
+						'id' => 'posts_select',
+						'type' => 'posts_select',
+						'title' => __('Posts Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a drop down menu of all the sites posts.', 'nhp-opts'),
+						'args' => array('numberposts' => '10')//uses get_posts
+						),
+					array(
+						'id' => 'posts_multi_select',
+						'type' => 'posts_multi_select',
+						'title' => __('Posts Multiple Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a Multi Select menu of all the sites posts.', 'nhp-opts'),
+						'args' => array('numberposts' => '10')//uses get_posts
+						),
+					array(
+						'id' => 'tags_select',
+						'type' => 'tags_select',
+						'title' => __('Tagss Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a drop down menu of all the sites tags.', 'nhp-opts'),
+						'args' => array('number' => '10')//uses get_tags
+						),
+					array(
+						'id' => 'tags_multi_select',
+						'type' => 'tags_multi_select',
+						'title' => __('Tags Multiple Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a Multi Select menu of all the sites tags.', 'nhp-opts'),
+						'args' => array('number' => '10')//uses get_tags
+						),
+					array(
+						'id' => 'cats_select',
+						'type' => 'cats_select',
+						'title' => __('Cats Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a drop down menu of all the sites cats.', 'nhp-opts'),
+						'args' => array('number' => '10')//uses get_categories
+						),
+					array(
+						'id' => 'cats_multi_select',
+						'type' => 'cats_multi_select',
+						'title' => __('Cats Multiple Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a Multi Select menu of all the sites cats.', 'nhp-opts'),
+						'args' => array('number' => '10')//uses get_categories
+						),
+					array(
+						'id' => 'menu_select',
+						'type' => 'menu_select',
+						'title' => __('Menu Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a drop down menu of all the sites menus.', 'nhp-opts'),
+						//'args' => array()//uses wp_get_nav_menus
+						),
+					array(
+						'id' => 'select_hide_below',
+						'type' => 'select_hide_below',
+						'title' => __('Select Hide Below Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field requires certain options to be checked before the below field will be shown.', 'nhp-opts'),
+						'options' => array(
+									'1' => array('name' => 'Opt 1 field below allowed', 'allow' => 'true'),
+									'2' => array('name' => 'Opt 2 field below hidden', 'allow' => 'false'),
+									'3' => array('name' => 'Opt 3 field below allowed', 'allow' => 'true')
+									),//Must provide key => value(array) pairs for select options
+						'std' => '2'
+						),
+					array(
+						'id' => 'menu_location_select',
+						'type' => 'menu_location_select',
+						'title' => __('Menu Location Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a drop down menu of all the themes menu locations.', 'nhp-opts')
+						),
+					array(
+						'id' => 'checkbox_hide_below',
+						'type' => 'checkbox_hide_below',
+						'title' => __('Checkbox to hide below', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a checkbox which will allow the user to use the next setting.', 'nhp-opts'),
+						),
+						array(
+						'id' => 'post_type_select',
+						'type' => 'post_type_select',
+						'title' => __('Post Type Select Option', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This field creates a drop down menu of all registered post types.', 'nhp-opts'),
+						//'args' => array()//uses get_post_types
+						),
+					array(
 						'id' => 'custom_callback',
 						//'type' => 'nothing',//doesnt need to be called for callback fields
 						'title' => __('Custom Field Callback', 'nhp-opts'), 
@@ -334,7 +492,10 @@ $sections[] = array(
 					)
 				);
 
-new NHP_Options($sections, $args);
+global $NHP_Options;
+$NHP_Options = new NHP_Options($sections, $args);
+
+
 
 /*
  * 
@@ -342,10 +503,38 @@ new NHP_Options($sections, $args);
  *
  */
 function my_custom_field($field, $value){
-	
 	print_r($field);
 	print_r($value);
 
+}//function
+
+/*
+ * 
+ * Custom function for the callback validation referenced above
+ *
+ */
+function validate_callback_function($field, $value, $existing_value){
+	
+	$error = false;
+	$value =  'just testing';
+	/*
+	do your validation
+	
+	if(something){
+		$value = $value;
+	}elseif(somthing else){
+		$error = true;
+		$value = $existing_value;
+		$field['msg'] = 'your custom error message';
+	}
+	*/
+	
+	$return['value'] = $value;
+	if($error == true){
+		$return['error'] = $field;
+	}
+	return $return;
+	
 }//function
 
 

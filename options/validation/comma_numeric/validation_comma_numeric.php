@@ -1,5 +1,5 @@
 <?php
-class NHP_Validation_html_custom extends NHP_Options{	
+class NHP_Validation_comma_numeric extends NHP_Options{	
 	
 	/**
 	 * Field Constructor.
@@ -12,6 +12,7 @@ class NHP_Validation_html_custom extends NHP_Options{
 		
 		parent::__construct();
 		$this->field = $field;
+		$this->field['msg'] = (isset($this->field['msg']))?$this->field['msg']:__('You must provide a comma seperated list of numerical values for this option.', 'nhp-opts');
 		$this->value = $value;
 		$this->current = $current;
 		$this->validate();
@@ -23,14 +24,19 @@ class NHP_Validation_html_custom extends NHP_Options{
 	/**
 	 * Field Render Function.
 	 *
-	 * Takes the vars and validates them
+	 * Takes the vars and outputs the HTML for the field in the settings
 	 *
 	 * @since NHP_Options 1.0
 	*/
 	function validate(){
 		
-		$this->value = wp_kses($this->value, $this->field['allowed_html']);
-				
+		$this->value = str_replace(' ', '', $this->value);
+		
+		if(!is_numeric(str_replace(',', '',$this->value))){
+			$this->value = (isset($this->current))?$this->current:'';
+			$this->error = $this->field;
+		}
+		
 	}//function
 	
 }//class

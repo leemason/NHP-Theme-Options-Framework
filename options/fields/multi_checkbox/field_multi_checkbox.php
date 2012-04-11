@@ -34,6 +34,8 @@ class NHP_Options_multi_checkbox extends NHP_Options{
 			
 			foreach($this->field['options'] as $k => $v){
 				
+				$this->value[$k] = (isset($this->value[$k]))?$this->value[$k]:'';
+				
 				echo '<label for="'.$this->field['id'].'_'.array_search($k,array_keys($this->field['options'])).'">';
 				echo '<input type="checkbox" id="'.$this->field['id'].'_'.array_search($k,array_keys($this->field['options'])).'" name="'.$this->args['opt_name'].'['.$this->field['id'].']['.$k.']" '.$class.' value="1" '.checked($this->value[$k], '1', false).'/>';
 				echo ' '.$v.'</label><br/>';
