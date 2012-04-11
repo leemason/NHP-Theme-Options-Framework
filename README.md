@@ -4,6 +4,7 @@ Theme options framework which uses the  [WordPress Settings API](http://codex.wo
 
 ## Simple Usage ##
 
+
 Simply require the *theme-options.php* file in your themes **functions.php** file, like so:
 
 ```php
