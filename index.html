@@ -143,6 +143,8 @@
               <li class="active"><a href="#main-header">Overview</a></li>
               <li><a href="#features">Features</a></li>
               <li><a href="#screenshots">Screenshots</a></li>
+              <li><a href="#fields">Fields</a></li>
+              <li><a href="#validation">Validation</a></li>
               <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki">Documentation</a></li>
               <li class="divider-vertical"></li>
               <li><a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master">Download</a></li>
@@ -172,7 +174,7 @@
 </div>
 <div class="span3 download-info">
 	<a href="https://github.com/leemason/NHP-Theme-Options-Framework" class="btn btn-info btn-large">View project on GitHub</a>
-	<a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master" class="btn btn-large">Download Framework <small>(v1.0.0)</small></a>
+	<a href="https://github.com/leemason/NHP-Theme-Options-Framework/zipball/master" class="btn btn-large">Download Framework <small>(v1.0.1)</small></a>
 </div>    
     
 </nav>
@@ -287,6 +289,235 @@
 	
 </ul>
 </div>
+</div>
+
+
+<hr/>
+<div class="heading" id="fields">
+<h1>Field Types.</h1>
+<p class="h-byline">The NHP Theme Options Framework has many built in field types, which include...</p>
+</div>
+<div class="row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_100_font.png" class="main-icons"/><h2 class="main-icons-header">Text</h2>
+		<p>The most basic of form fields. Basic, but important.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_110_align_left.png" class="main-icons"/><h2 class="main-icons-header">Textarea</h2>
+		<p>Again basic, but essencial.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_150_check.png" class="main-icons" style="margin-top:10px;" /><h2 class="main-icons-header">Checkbox</h2>
+		<p>The humble "Check if you want to.....".</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_153_more_windows.png" class="main-icons"/><h2 class="main-icons-header">Multi Checkbox</h2>
+		<p>The expanded "Check if you want to.....".</p>
+	</div>
+</div>
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_108_left_indent.png" class="main-icons"/><h2 class="main-icons-header">Select</h2>
+		<p>Want to provide a list of possible option values.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_114_list.png" class="main-icons"/><h2 class="main-icons-header">Multiple Select</h2>
+		<p>Need the option to have multiple option values at once?</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_106_text_width.png" class="main-icons"/><h2 class="main-icons-header">Tiny MCE Editor</h2>
+		<p>Want a full rich editing experience? Use the best editor around.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_155_show_thumbnails.png" class="main-icons"/><h2 class="main-icons-header">Radio</h2>
+		<p>Multiple option choices, one outcome?</p>
+	</div>
+</div>
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_159_picture.png" class="main-icons"/><h2 class="main-icons-header">Radio Images</h2>
+		<p>Great for showing a page layout option.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_154_show_big_thumbnails.png" class="main-icons"/><h2 class="main-icons-header">Button Set</h2>
+		<p>Want to use some jQuery UI goodness? Use a button set.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_045_calendar.png" class="main-icons"/><h2 class="main-icons-header">Date</h2>
+		<p>Privide a calendar widget for users to select a date.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_042_pie_chart.png" class="main-icons"/><h2 class="main-icons-header">Color</h2>
+		<p>Need some custom colors? Use the Farbtastic color picker.</p>
+	</div>
+</div>
+
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_201_upload.png" class="main-icons"/><h2 class="main-icons-header">Upload</h2>
+		<p>Upload images/files, great for logo options.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_039_notes.png" class="main-icons"/><h2 class="main-icons-header">WP Pages</h2>
+		<p>Display a drop down list of WP pages.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_039_notes.png" class="main-icons"/><h2 class="main-icons-header">WP Pages Multi</h2>
+		<p>Display a multi select drop down list of WP pages.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_030_pencil.png" class="main-icons"/><h2 class="main-icons-header">WP Posts</h2>
+		<p>Display a drop down list of WP posts.</p>
+	</div>
+</div>
+
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_201_upload.png" class="main-icons"/><h2 class="main-icons-header">WP Posts Multi</h2>
+		<p>Display a multi select drop down list of WP posts.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_065_tag.png" class="main-icons"/><h2 class="main-icons-header">WP Tags</h2>
+		<p>Display a drop down list of WP tags.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_066_tags.png" class="main-icons"/><h2 class="main-icons-header">WP Tags Multi</h2>
+		<p>Display a multi select drop down list of WP tags.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_144_folder_open.png" class="main-icons"/><h2 class="main-icons-header">WP Categories</h2>
+		<p>Display a drop down list of WP cats.</p>
+	</div>
+</div>
+
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_149_folder_new.png" class="main-icons"/><h2 class="main-icons-header">WP Categories Multi</h2>
+		<p>Display a multi select drop down list of WP cats.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_281_bullets.png" class="main-icons"/><h2 class="main-icons-header">WP Menu Select</h2>
+		<p>Display a drop down list of WP menus that you have created.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_289_podium.png" class="main-icons"/><h2 class="main-icons-header">WP Menu Locations</h2>
+		<p>Display a drop down list of the current themes registered menu locations.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_319_sort.png" class="main-icons"/><h2 class="main-icons-header">WP Post Type Select</h2>
+		<p>Display a drop down list of WP post types.</p>
+	</div>
+</div>
+
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_009_magic.png" class="main-icons"/><h2 class="main-icons-header">Checkbox Hide Below</h2>
+		<p>Checkbox option which hides the next field if not checked.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_009_magic.png" class="main-icons"/><h2 class="main-icons-header">Select Hide Below</h2>
+		<p>Select menu that will hide the next option based on selected setting.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_249_divide.png" class="main-icons" style="margin-top:10px;" /><h2 class="main-icons-header">Field Seperator Divide</h2>
+		<p>Divide the settings section for less intense option fields, divides the settings and adds a border line.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_195_circle_info.png" class="main-icons"/><h2 class="main-icons-header">Info Field</h2>
+		<p>Display an info section, great if a setting needs additional info.</p>
+	</div>
+</div>
+
+
+
+
+<hr/>
+<div class="heading" id="validation">
+<h1>Validation Classes.</h1>
+<p class="h-byline">The NHP Theme Options Framework has many built in validation classes, which include...</p>
+</div>
+<div class="row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_329_e-mail.png" class="main-icons"/><h2 class="main-icons-header">Email</h2>
+		<p>Makes sure the users inputs a valid email address.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_152_new_window.png" class="main-icons"/><h2 class="main-icons-header">URL</h2>
+		<p>Checks the submitted value is a URL.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_194_circle_question_mark.png" class="main-icons" /><h2 class="main-icons-header">Numeric</h2>
+		<p>Makes sure the value and makes sure it is numerical.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_191_circle_minus.png" class="main-icons"/><h2 class="main-icons-header">Comma Seperated Numeric</h2>
+		<p>Only allows numeric values seperated by comma's.</p>
+	</div>
+</div>
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_118_embed_close.png" class="main-icons"/><h2 class="main-icons-header">Escape JS</h2>
+		<p>Escape Javascript Code input.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_118_embed_close.png" class="main-icons"/><h2 class="main-icons-header">HTML</h2>
+		<p>Filter and clean HTML input just like WordPress does.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_117_embed.png" class="main-icons" /><h2 class="main-icons-header">HTML Custom</h2>
+		<p>Filter and clean HTML with custom defined rules.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_199_ban.png" class="main-icons"/><h2 class="main-icons-header">No HTML</h2>
+		<p>Strip HTML content from a string.</p>
+	</div>
+</div>
+
+<div class="row main-icons-row">
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_248_asterisk.png" class="main-icons"/><h2 class="main-icons-header">No Special Characters</h2>
+		<p>Filter and remove any Special Charaters.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_042_pie_chart.png" class="main-icons"/><h2 class="main-icons-header">Color</h2>
+		<p>Check for a valid HTML hex value.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_045_calendar.png" class="main-icons" /><h2 class="main-icons-header">Date</h2>
+		<p>Check for a valid date input.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_199_ban.png" class="main-icons"/><h2 class="main-icons-header">No HTML</h2>
+		<p>Strip HTML content from a string.</p>
+	</div>
+</div>
+
+
+<div class="row main-icons-row">
+	<div class="span3 offset3">
+		<img src="inc/glyphicons/glyphicons_214_resize_small.png" class="main-icons"/><h2 class="main-icons-header">Str Replace</h2>
+		<p>Programatically replace elements of the value.</p>
+	</div>
+	<div class="span3">
+		<img src="inc/glyphicons/glyphicons_215_resize_full.png" class="main-icons"/><h2 class="main-icons-header">Preg Replace</h2>
+		<p>Programatically replace elements of the value.</p>
+	</div>
+</div>
+
+
+<hr/>
+<div class="heading" id="fields">
+<h1>Framework Extended.</h1>
+<p class="h-byline">The NHP Theme Options Framework has many built in features, buts its best feature is the way it allows you to create / extend the framework. By creating field classes, validation classes, or custom callback functions for both field, and validation.</p>
+<p class="h-byline">There are multiple hook and filter references throughout the Framework which are designed so you can spend you time creating great themes. And only worrying about the options if you need very custom functionality (which by the way is a posibility with the Framework).</p>
+<p class="h-byline">Check out the <a href="https://github.com/leemason/NHP-Theme-Options-Framework/wiki">WIKI</a> for more details on extending the Core Framework.</p>
 </div>
 
 
