@@ -8,12 +8,12 @@ class NHP_Options_post_type_select extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0.1
 	*/
-	function __construct($field, $value){
+	function __construct($field = array(), $value =''){
 		
 		parent::__construct();
 		$this->field = $field;
 		$this->value = $value;
-		$this->render();
+		//$this->render();
 		
 	}//function
 	

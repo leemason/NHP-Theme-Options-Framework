@@ -8,12 +8,12 @@ class NHP_Options_radio_img extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0
 	*/
-	function __construct($field, $value){
+	function __construct($field = array(), $value =''){
 		
 		parent::__construct();
 		$this->field = $field;
 		$this->value = $value;
-		$this->render();
+		//$this->render();
 		
 	}//function
 	

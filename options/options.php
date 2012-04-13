@@ -340,7 +340,8 @@ class NHP_Options{
 						$field_class = 'NHP_Options_'.$field['type'];
 				
 						if(class_exists($field_class) && method_exists($field_class, 'enqueue')){
-							$field_class::enqueue();
+							$enqueue = new $field_class();
+							$enqueue->enqueue();
 						}//if
 						
 					}//if type
@@ -838,7 +839,8 @@ class NHP_Options{
 			if(class_exists($field_class)){
 				$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
 				do_action('nhp-opts-before-field', $field, $value);
-				new $field_class($field, $value);
+				$render = new $field_class($field, $value);
+				$render->render();
 				do_action('nhp-opts-after-field', $field, $value);
 			}//if
 			
