@@ -13,6 +13,7 @@ class NHP_Options_upload extends NHP_Options{
 		parent::__construct();
 		$this->field = $field;
 		$this->value = $value;
+		//$this->render();
 		
 	}//function
 	
@@ -31,9 +32,7 @@ class NHP_Options_upload extends NHP_Options{
 		
 		
 		echo '<input type="hidden" id="'.$this->field['id'].'" name="'.$this->args['opt_name'].'['.$this->field['id'].']" value="'.$this->value.'" class="'.$class.'" />';
-		//if($this->value != ''){
-			echo '<img class="nhp-opts-screenshot" id="nhp-opts-screenshot-'.$this->field['id'].'" src="'.$this->value.'" />';
-		//}
+		echo '<img class="nhp-opts-screenshot" src="'.$this->value.'" />';
 		
 		if($this->value == ''){$remove = ' style="display:none;"';$upload = '';}else{$remove = '';$upload = ' style="display:none;"';}
 		echo ' <a href="javascript:void(0);" class="nhp-opts-upload button-secondary"'.$upload.' rel-id="'.$this->field['id'].'">'.__('Browse', 'nhp-opts').'</a>';
@@ -56,13 +55,11 @@ class NHP_Options_upload extends NHP_Options{
 		
 		wp_enqueue_script(
 			'nhp-opts-field-upload-js', 
-			$this->url.'fields/upload/field_upload.js', 
+			$this->args['theme_url'].'options/fields/upload/field_upload.js', 
 			array('jquery', 'thickbox', 'media-upload'),
 			time(),
 			true
 		);
-		
-		wp_localize_script('nhp-opts-field-upload-js', 'nhp_upload', array('url' => $this->url.'fields/upload/blank.png'));
 		
 	}//function
 	
