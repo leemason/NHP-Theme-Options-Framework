@@ -1,17 +1,64 @@
 <?php
 
-if(!class_exists('NHP_Options')){
-	require( dirname( __FILE__ ) . '/options/options.php' );
-}
-$args = array();
 /*
+ * 
+ * Custom function for filtering the sections array given by theme, good for child themes to override or add to the sections.
+ * Simply include this function in the child themes functions.php file.
  *
+ */
+function add_another_section($sections){
+	
+	//$sections = array();
+	$sections[] = array(
+				'title' => __('A Section added by hook', 'nhp-opts'),
+				'desc' => __('<p class="description">This is a section created by adding a filter to the sections array, great to allow child themes, to add/remove sections from the options.</p>', 'nhp-opts'),
+				//all the glyphicons are included in the options folder, so you can hook into them, or link to your own custom ones.
+				//You dont have to though, leave it blank for default.
+				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_062_attach.png',
+				//Lets leave this as a blank section, no options just some intro text set above.
+				'fields' => array()
+				);
+	
+	return $sections;
+	
+}//function
+add_filter('nhp-opts-sections', 'add_another_section');
+
+
+/*
+ * 
+ * Custom function for filtering the args array given by theme, good for child themes to override or add to the args array.
+ *
+ */
+function change_framework_args($args){
+	
+	$args['dev_mode'] = false;
+	
+	return $args;
+	
+}//function
+add_filter('nhp-opts-args', 'change_framework_args');
+
+
+
+
+
+
+
+
+
+/*
+ * This is the meat of creating the optons page
  *
  * Override some of the default values, uncomment the args and change the values
  * - no $args are required, but there there to be over ridden if needed.
  *
  *
  */
+if(!class_exists('NHP_Options')){
+	require( dirname( __FILE__ ) . '/options/options.php' );
+}
+$args = array();
 
 //Set it to dev mode to view the class settings/info in the form - default is false
 $args['dev_mode'] = true;
@@ -45,6 +92,9 @@ $args['share_icons']['linked_in'] = array(
 
 //Choose a custom option name for your theme options, the default is the theme name in lowercase with spaces replaced by underscores
 //$args['opt_name'] = $defaults['theme_data']['short_name'];
+
+//Custom menu location for options page - default is "theme" - credits to https://github.com/MartyThornley
+//$args['parent_page'] = 'theme';
 
 //Custom menu title for options page - default is "Theme Options"
 //$args['menu_title'] = __('Theme Options', 'nhp-opts');
@@ -91,7 +141,7 @@ $sections[] = array(
 $sections[] = array(
 				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_107_text_resize.png',
 				'title' => __('Text Fields', 'nhp-opts'),
-				'desc' => __('<p class="description">This is the Description. Again HTML is allowed</p>', 'nhp-opts'),
+				'desc' => __('<p class="description">This is the Description. Again HTML is allowed2</p>', 'nhp-opts'),
 				'fields' => array(
 					array(
 						'id' => '1', //must be unique
@@ -536,32 +586,4 @@ function validate_callback_function($field, $value, $existing_value){
 	return $return;
 	
 }//function
-
-
-
-
-
-/*
- *
- *
- *
- * Okay lets look at extending this framework
- *
- *
- *
- */
- 
-//apply_filters('nhp-opts-page-icon-id', 'icon-themes') - filter div id for page icon
-//do_action('nhp-opts-enqueue'); - load page speicfic js and css - use this to register custom js/css
-//do_action('nhp-opts-load-page', $screen); - hooks into the load-page hook
-//do_action('nhp-opts-admin-head', $this); - allows you to hook into the pages head section
-//do_action('nhp-opts-page-before-form'); - before form
-//do_action('nhp-opts-before-field', $field(array), $value); - before each field
-//do_action('nhp-opts-after-field', $field(array), $value); - after each field
-//do_action('nhp-opts-page-after-form'); - after form
-//do_action('nhp-opts-after-theme-info', $theme_data(array)); - after theme info
-//do_action('nhp-opts-get-fields'); - used to require custom filed classes
-//do_action('nhp-opts-get-validation'); - used to require custom validation classes
-//do_action('nhp-opts-register-settings'); - hook after registering settings
-//do_action('nhp-opts-options-validate', $plugin_options, $options); - hooks into the values validation method
 ?>
