@@ -12,6 +12,7 @@ class NHP_Validation_no_special_chars extends NHP_Options{
 		
 		parent::__construct();
 		$this->field = $field;
+		$this->field['msg'] = (isset($this->field['msg']))?$this->field['msg']:__('You must not enter any special characters in this field, all special characters have been removed.', 'nhp-opts');
 		$this->value = $value;
 		$this->current = $current;
 		$this->validate();
@@ -28,6 +29,10 @@ class NHP_Validation_no_special_chars extends NHP_Options{
 	 * @since NHP_Options 1.0.1
 	*/
 	function validate(){
+		
+		if(!preg_match('/[^a-zA-Z0-9_ -]/s', $this->value) == 0){
+			$this->warning = $this->field;
+		}
 		
 		$this->value = preg_replace('/[^a-zA-Z0-9_ -]/s', '', $this->value);
 				

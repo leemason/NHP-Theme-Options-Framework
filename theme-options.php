@@ -1,9 +1,20 @@
 <?php
+/*
+ * 
+ * Require the framework class before doing anything else, so we can use the defined urls and dirs
+ *
+ */
+if(!class_exists('NHP_Options')){
+	require_once( dirname( __FILE__ ) . '/options/options.php' );
+}
 
 /*
  * 
  * Custom function for filtering the sections array given by theme, good for child themes to override or add to the sections.
  * Simply include this function in the child themes functions.php file.
+ *
+ * NOTE: the defined constansts for urls, and dir will NOT be available at this point in a child theme, so you must use
+ * get_template_directory_uri() if you want to use any of the built in icons
  *
  */
 function add_another_section($sections){
@@ -32,7 +43,7 @@ add_filter('nhp-opts-sections', 'add_another_section');
  */
 function change_framework_args($args){
 	
-	$args['dev_mode'] = false;
+	//$args['dev_mode'] = false;
 	
 	return $args;
 	
@@ -55,9 +66,7 @@ add_filter('nhp-opts-args', 'change_framework_args');
  *
  *
  */
-if(!class_exists('NHP_Options')){
-	require( dirname( __FILE__ ) . '/options/options.php' );
-}
+
 $args = array();
 
 //Set it to dev mode to view the class settings/info in the form - default is false
@@ -76,12 +85,12 @@ $args['support_url'] = 'http://no-half-pixels.com';
 $args['share_icons']['twitter'] = array(
 										'link' => 'http://twitter.com/lee__mason',
 										'title' => 'Folow me on Twitter', 
-										'img' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_322_twitter.png'
+										'img' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_322_twitter.png'
 										);
 $args['share_icons']['linked_in'] = array(
 										'link' => 'http://uk.linkedin.com/pub/lee-mason/38/618/bab',
 										'title' => 'Find me on LinkedIn', 
-										'img' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_337_linked_in.png'
+										'img' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_337_linked_in.png'
 										);
 
 //Set this to false to stop the Theme Information tab from being displayed - default functionality is to allow
@@ -132,14 +141,14 @@ $sections[] = array(
 				'desc' => __('<p class="description">This is the description field for the Section. HTML is allowed</p>', 'nhp-opts'),
 				//all the glyphicons are included in the options folder, so you can hook into them, or link to your own custom ones.
 				//You dont have to though, leave it blank for default.
-				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_062_attach.png'
+				'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_062_attach.png'
 				//Lets leave this as a blank section, no options just some intro text set above.
 				//'fields' => array()
 				);
 
 				
 $sections[] = array(
-				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_107_text_resize.png',
+				'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_107_text_resize.png',
 				'title' => __('Text Fields', 'nhp-opts'),
 				'desc' => __('<p class="description">This is the Description. Again HTML is allowed2</p>', 'nhp-opts'),
 				'fields' => array(
@@ -279,7 +288,7 @@ $sections[] = array(
 					)
 				);
 $sections[] = array(
-				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_150_check.png',
+				'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_150_check.png',
 				'title' => __('Radio/Checkbox Fields', 'nhp-opts'),
 				'desc' => __('<p class="description">This is the Description. Again HTML is allowed</p>', 'nhp-opts'),
 				'fields' => array(
@@ -326,7 +335,7 @@ $sections[] = array(
 					)
 				);
 $sections[] = array(
-				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_157_show_lines.png',
+				'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_157_show_lines.png',
 				'title' => __('Select Fields', 'nhp-opts'),
 				'desc' => __('<p class="description">This is the Description. Again HTML is allowed</p>', 'nhp-opts'),
 				'fields' => array(
@@ -351,7 +360,7 @@ $sections[] = array(
 					)
 				);
 $sections[] = array(
-				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_023_cogwheels.png',
+				'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_023_cogwheels.png',
 				'title' => __('Custom Fields', 'nhp-opts'),
 				'desc' => __('<p class="description">This is the Description. Again HTML is allowed</p>', 'nhp-opts'),
 				'fields' => array(
@@ -421,7 +430,7 @@ $sections[] = array(
 					array(
 						'id' => 'tags_select',
 						'type' => 'tags_select',
-						'title' => __('Tagss Select Option', 'nhp-opts'), 
+						'title' => __('Tags Select Option', 'nhp-opts'), 
 						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
 						'desc' => __('This field creates a drop down menu of all the sites tags.', 'nhp-opts'),
 						'args' => array('number' => '10')//uses get_tags
@@ -505,7 +514,7 @@ $sections[] = array(
 				);
 
 $sections[] = array(
-				'icon' => trailingslashit(get_template_directory_uri()).'options/img/glyphicons/glyphicons_093_crop.png',
+				'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_093_crop.png',
 				'title' => __('Non Value Fields', 'nhp-opts'),
 				'desc' => __('<p class="description">This is the Description. Again HTML is allowed</p>', 'nhp-opts'),
 				'fields' => array(

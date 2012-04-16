@@ -86,6 +86,22 @@ border: 1px solid #e5e5e5;
     padding: 8px 35px 8px 14px;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
+
+
+
+#nhp-opts-field-warnings{
+	margin:0px;
+	display:none;
+	border-bottom:1px solid #DFDFDF;
+	background-color: #FCF8E3;
+    color: #C09853;
+    padding: 8px 35px 8px 14px;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);	
+}
+
+
+
+
 #nhp-opts-field-errors{
 	margin:0px;
 	display:none;
@@ -106,12 +122,29 @@ border: 1px solid #e5e5e5;
 	float: left;
 }
 
+.nhp-opts-menu-warning{
+	background-color: #C09853;
+    color: #FCF8E3;
+	display: inline-block;
+	float:right;
+    padding: 6px 7px 4px 7px;
+    margin-left:4px;
+	-moz-border-radius: 20px; /* Firefox */
+	-webkit-border-radius: 20px; /* Safari, Chrome */
+	border-radius: 20px;
+	font-family: sans-serif;
+    font-size: 9px;
+    font-weight: bold;
+    line-height: 9px;
+}
+
 .nhp-opts-menu-error{
 	background-color: #B94A48;
     color: #F2DEDE;
 	display: inline-block;
 	float:right;
     padding: 6px 7px 4px 7px;
+    margin-left:4px;
 	-moz-border-radius: 20px; /* Firefox */
 	-webkit-border-radius: 20px; /* Safari, Chrome */
 	border-radius: 20px;
@@ -224,12 +257,30 @@ border: 1px solid #e5e5e5;
 	display:block;
 	color:#666666;
 }
+
+
+.nhp-opts-group-tab .form-table tr td .nhp-opts-th-warning{
+	font-size:1em;
+    color: #C09853;
+	font-weight:normal;
+	display:block;
+}
+.nhp-opts-group-tab .form-table tr td .nhp-opts-field-warning{
+	border-color:#C09853;
+}
+
+
 .nhp-opts-group-tab .form-table tr td .nhp-opts-th-error{
 	font-size:1em;
 	color:#B94A48;
 	font-weight:normal;
 	display:block;
 }
+.nhp-opts-group-tab .form-table tr td .nhp-opts-field-error{
+	border-color:#B94A48;
+}
+
+
 /* reset nested tables for mce */
 .nhp-opts-group-tab .form-table tr td table.mceLayout,
 .nhp-opts-group-tab .form-table tr td table.mceLayout tr,
@@ -306,13 +357,18 @@ border: 1px solid #e5e5e5;
 	background-color: white;
 	border: 1px solid #222;
 	padding: 5px;
+	z-index:100;
 }
 
 
 
+#nhp-opts-import-link-wrapper,
+#nhp-opts-import-code-wrapper{
+	display:none;
+}
 
-
-#nhp-opts-export-code{
+#nhp-opts-export-code,
+#nhp-opts-export-link-value{
 	display:none;
 }
 #nhp-opts-import-action span{

@@ -12,6 +12,7 @@ class NHP_Validation_no_html extends NHP_Options{
 		
 		parent::__construct();
 		$this->field = $field;
+		$this->field['msg'] = (isset($this->field['msg']))?$this->field['msg']:__('You must not enter any HTML in this field, all HTML tags have been removed.', 'nhp-opts');
 		$this->value = $value;
 		$this->current = $current;
 		$this->validate();
@@ -29,7 +30,13 @@ class NHP_Validation_no_html extends NHP_Options{
 	*/
 	function validate(){
 		
-		$this->value = strip_tags($this->value);
+		$newvalue = strip_tags($this->value);
+		
+		if($this->value != $newvalue){
+			$this->warning = $this->field;
+		}
+		
+		$this->value = $newvalue;
 				
 	}//function
 	

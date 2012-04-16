@@ -1,24 +1,32 @@
 <?php
-//apply_filters('nhp-opts-page-icon-id', 'icon-themes') - change div class for page icon
-//apply_filters('nhp-opts-sections', $sections); - allow child themes to add sections
-//apply_filters('nhp-opts-args', $args); - allow child themes to change the args array
-//do_action('nhp-opts-enqueue'); - load page speicfic js and css - use this to register custom js/css
-//do_action('nhp-opts-load-page', $screen); - hooks into the load-page hook
-//do_action('nhp-opts-admin-head', $this); - allows you to hook into the pages head section
-//do_action('nhp-opts-page-before-form'); - before form
-//do_action('nhp-opts-before-field', $field(array), $value); - before each field
-//do_action('nhp-opts-after-field', $field(array), $value); - after each field
-//do_action('nhp-opts-page-after-form'); - after form
-//do_action('nhp-opts-after-theme-info', $theme_data(array)); - after theme info
-//apply_filters('nhp-opts-import-description',__('Input your backup file below and hit Import to restore your sites options from a backup.', 'nhp-opts')); - filter the restore description
-//apply_filters('nhp-opts-backup-description', __('Here you can download/copy your themes current option settings. Keep this safe as you can use it as a backup should anything go wrong. Or you can use it to restore your settings on this site.', 'nhp-opts')); - filter the backup description
-//do_action('nhp-opts-get-fields'); - used to require custom filed classes
-//do_action('nhp-opts-get-validation'); - used to require custom validation classes
-//do_action('nhp-opts-register-settings'); - hook after registering settings
-//do_action('nhp-opts-options-validate', $plugin_options, $options); - hooks into the values validation method
+/*
+changelog
+
+define dir and url before calling class, allows sections array to use framework links for builtin icons much easier
+changed import/export code to just a serialized array
+export options is now a feed url, with secret key validation for security
+allow import through file, or url
+javascript errors now adds class to input fields instead of inline styles
+options panel now loads the last tab viewed whenever accessing the page.
+added support for validation warnings (used by no html and no special chars validation, but extendable the same as errors)
+fixed error where using the upload field type and the wp_editor field type upload functionality by storing the original sentoeditor
+removed php4 construtor to save bytes as wp is now php5.2.4 and above
+moved default option adding to the init hook instead of admin_init for an earlier assignment
+fixed an isset error when setting default values, and reassigned the options array after setting defaults on first activation (function was adding the values, but the options array wasnt updated till after the page loads, so default options existed but were not displayed)
+fixed css issue with farbtastic popup color picker were it was displaying under the radio button set.
+fixed typo on tags select field in theme-options.php
+
+*/
 
 if ( ! class_exists('NHP_Options') ){
 	
+	if( file_exists(STYLESHEETPATH.'/options/options.php') ){
+		define('NHP_OPTIONS_URL', trailingslashit(get_stylesheet_directory_uri()).'options/');
+	}elseif( file_exists(TEMPLATEPATH.'/options/options.php') ){
+		define('NHP_OPTIONS_URL', trailingslashit(get_template_directory_uri()).'options/');
+	}
+	
+		define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
 	
 class NHP_Options{
 	
@@ -34,16 +42,12 @@ class NHP_Options{
 	function __construct($sections = array(), $args = array()){
 		
 		$this->framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
-		$this->framework_version = '1.0.2';
+		$this->framework_version = '1.0.3';
 		
 		//get this path
-		$this->dir = trailingslashit(dirname(__FILE__));
+		$this->dir = NHP_OPTIONS_DIR;
 		//get this frameworks url for images,etc
-		if( file_exists(STYLESHEETPATH.'/options/options.php') ){
-			$this->url = trailingslashit(get_stylesheet_directory_uri()).'options/';
-		}elseif( file_exists(TEMPLATEPATH.'/options/options.php') ){
-			$this->url = trailingslashit(get_template_directory_uri()).'options/';
-		}
+		$this->url = NHP_OPTIONS_URL;
 		
 		
 		//get field classes
@@ -104,14 +108,12 @@ class NHP_Options{
 		$this->args = wp_parse_args( $args, $defaults );
 		$this->args = apply_filters('nhp-opts-args', $this->args);
 		
-		//setup the errors array for later
+		//setup the errors and warnings array for later
 		$this->errors = array();
-		
-		//get the options for use later on
-		$this->options = get_option($this->args['opt_name']);
+		$this->warnings = array();
 		
 		//set option with defaults
-		add_action('admin_init', array(&$this, '_set_default_options'));
+		add_action('init', array(&$this, '_set_default_options'));
 		
 		//options page
 		add_action('admin_menu', array(&$this, '_options_page'));
@@ -123,22 +125,16 @@ class NHP_Options{
 		//add the js for the error handling before the form
 		add_action('nhp-opts-page-before-form', array(&$this, '_errors_js'), 1);
 		
-		//hook into the load page hook for downloading the exported settings
-		add_action('nhp-opts-load-page', array(&$this, '_download_options'));
+		//add the js for the warning handling before the form
+		add_action('nhp-opts-page-before-form', array(&$this, '_warnings_js'), 2);
+		
+		//hook into the wp feeds for downloading the exported settings
+		add_action('do_feed_nhpopts', array(&$this, '_download_options'), 1, 1);
+		
+		//get the options for use later on
+		$this->options = get_option($this->args['opt_name']);
 		
 		
-	}//function
-	
-	
-	/**
-	 * PHP4 Fallback, i know WP is PHP5 now i just cant help myself im so used to it.
-	 *
-	 * @since NHP_Options 1.0
-	 *
-	 * @param $array $args Arguments. Class constructor arguments.
-	*/
-	function NHP_Options($args){
-		__construct($args);
 	}//function
 	
 	
@@ -166,6 +162,7 @@ class NHP_Options{
 			echo $option;
 		}
 	}//function
+	
 	
 	
 	
@@ -258,15 +255,18 @@ class NHP_Options{
 		
 				foreach($section['fields'] as $fieldk => $field){
 					
-					if(isset($field['std'])){$field['std'] = '';}
+					if(!isset($field['std'])){$field['std'] = '';}
 						
 						$defaults[$field['id']] = $field['std'];
 					
 				}//foreach
 			
-			}//if(isset($section['fields'])){
+			}//if
 			
 		}//foreach
+		
+		//fix for notice on first page load
+		$defaults['last_tab'] = 0;
 		
 		return $defaults;
 		
@@ -284,6 +284,7 @@ class NHP_Options{
 		if(!get_option($this->args['opt_name'])){
 			add_option($this->args['opt_name'], $this->_default_values());
 		}
+		$this->options = get_option($this->args['opt_name']);
 	}//function
 	
 	
@@ -373,11 +374,18 @@ class NHP_Options{
 	}//function
 	
 	/**
-	 * Download the options file
+	 * Download the options file, or display it
 	 *
-	 * @since NHP_Options 1.0
+	 * @since NHP_Options 1.0.1
 	*/
 	function _download_options(){
+		if(!isset($_GET['secret']) || $_GET['secret'] != md5(AUTH_KEY.SECURE_AUTH_KEY)){wp_die('Invalid Secret for options use');exit;}
+		
+		$backup_options = $this->options;
+		$backup_options['nhp-opts-backup'] = '1';
+		$content = '###'.serialize($backup_options).'###';
+		
+		
 		if(isset($_GET['action']) && $_GET['action'] == 'download_options'){
 			header('Content-Description: File Transfer');
 			header('Content-type: application/txt');
@@ -386,13 +394,14 @@ class NHP_Options{
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate');
 			header('Pragma: public');
-			$backup_options = get_option($this->args['opt_name']);
-			$backup_options = $this->options;
-			$backup_options['nhp-opts-backup'] = '1';
-			echo '###'.base64_encode(serialize($backup_options)).'###';
+			echo $content;
+			exit;
+		}else{
+			echo $content;
 			exit;
 		}
 	}
+	
 	
 	
 	
@@ -492,12 +501,21 @@ class NHP_Options{
 		
 		set_transient('nhp-opts-saved', '1', 1000 );
 		
-		if(!empty($plugin_options['import']) && $plugin_options['import_code'] != ''){
-			$imported_options = unserialize(base64_decode($plugin_options['import_code']));
+		if(!empty($plugin_options['import'])){
+			
+			if($plugin_options['import_code'] != ''){
+				$import = $plugin_options['import_code'];
+			}elseif($plugin_options['import_link'] != ''){
+				$import = wp_remote_retrieve_body( wp_remote_get($plugin_options['import_link']) );
+			}
+			
+			$imported_options = unserialize(trim($import,'###'));
 			if(is_array($imported_options) && isset($imported_options['nhp-opts-backup']) && $imported_options['nhp-opts-backup'] == '1'){
 				$imported_options['imported'] = 1;
 				return $imported_options;
 			}
+			
+			
 		}
 		
 		
@@ -511,8 +529,11 @@ class NHP_Options{
 		$plugin_options = $this->_validate_values($plugin_options, $this->options);
 		
 		if($this->errors){
-			set_transient('nhp-opts-errors', $this->errors, 1000 );
-			
+			set_transient('nhp-opts-errors', $this->errors, 1000 );		
+		}//if errors
+		
+		if($this->warnings){
+			set_transient('nhp-opts-warnings', $this->warnings, 1000 );		
 		}//if errors
 		
 		do_action('nhp-opts-options-validate', $plugin_options, $this->options);
@@ -521,6 +542,7 @@ class NHP_Options{
 		unset($plugin_options['defaults']);
 		unset($plugin_options['import']);
 		unset($plugin_options['import_code']);
+		unset($plugin_options['import_link']);
 		
 		return $plugin_options;	
 	
@@ -565,6 +587,9 @@ class NHP_Options{
 							if(isset($validation->error)){
 								$this->errors[] = $validation->error;
 							}
+							if(isset($validation->warning)){
+								$this->warnings[] = $validation->warning;
+							}
 							continue;
 						}//if
 					}//if
@@ -576,6 +601,9 @@ class NHP_Options{
 						$plugin_options[$field['id']] = $callbackvalues['value'];
 						if(isset($callbackvalues['error'])){
 							$this->errors[] = $callbackvalues['error'];
+						}//if
+						if(isset($callbackvalues['warning'])){
+							$this->warnings[] = $callbackvalues['warning'];
 						}//if
 						
 					}//if
@@ -612,6 +640,8 @@ class NHP_Options{
 
 			echo '<form method="post" action="options.php" enctype="multipart/form-data" id="nhp-opts-form-wrapper">';
 				settings_fields($this->args['opt_name'].'_group');
+				echo '<input type="hidden" id="last_tab" name="'.$this->args['opt_name'].'[last_tab]" value="'.$this->options['last_tab'].'" />';
+				
 				echo '<div id="nhp-opts-header">';
 					echo '<input type="submit" name="submit" value="'.__('Save Changes', 'nhp-opts').'" class="button-primary" />';
 					echo '<input type="submit" name="'.$this->args['opt_name'].'[defaults]" value="'.__('Reset to Defaults', 'nhp-opts').'" class="button-secondary" />';
@@ -628,6 +658,8 @@ class NHP_Options{
 					}
 					echo '<div id="nhp-opts-save-warn">'.__('<strong>Settings have changed!, you should save them!</strong>', 'nhp-opts').'</div>';
 					echo '<div id="nhp-opts-field-errors">'.__('<strong><span></span> error(s) were found!</strong>', 'nhp-opts').'</div>';
+					
+					echo '<div id="nhp-opts-field-warnings">'.__('<strong><span></span> warning(s) were found!</strong>', 'nhp-opts').'</div>';
 				
 				echo '<div class="clear"></div><!--clearfix-->';
 				
@@ -641,6 +673,8 @@ class NHP_Options{
 						}
 						
 						echo '<li class="divide">&nbsp;</li>';
+						
+						do_action('nhp-opts-after-section-menu-items', $this);
 						
 						if($this->args['show_import_export'] == true){
 							echo '<li id="import_export_default_section_group_li" class="nhp-opts-group-tab-link-li">';
@@ -685,31 +719,56 @@ class NHP_Options{
 					
 					
 					
+					
 					if($this->args['show_import_export'] == true){
 						echo '<div id="import_export_default_section_group'.'" class="nhp-opts-group-tab">';
 							echo '<h3>'.__('Import / Export Options', 'nhp-opts').'</h3>';
 							
 							echo '<h4>'.__('Import Options', 'nhp-opts').'</h4>';
-							echo '<div class="nhp-opts-section-desc">';
-			
-								echo '<p class="description">'.apply_filters('nhp-opts-import-description',__('Input your backup file below and hit Import to restore your sites options from a backup.', 'nhp-opts')).'</p>';
+							
+							echo '<p><a href="javascript:void(0);" id="nhp-opts-import-code-button" class="button-secondary">Import from file</a> <a href="javascript:void(0);" id="nhp-opts-import-link-button" class="button-secondary">Import from URL</a></p>';
+							
+							echo '<div id="nhp-opts-import-code-wrapper">';
+							
+								echo '<div class="nhp-opts-section-desc">';
+				
+									echo '<p class="description" id="import-code-description">'.apply_filters('nhp-opts-import-file-description',__('Input your backup file below and hit Import to restore your sites options from a backup.', 'nhp-opts')).'</p>';
+								
+								echo '</div>';
+								
+								echo '<textarea id="import-code-value" name="'.$this->args['opt_name'].'[import_code]" class="large-text" rows="8"></textarea>';
 							
 							echo '</div>';
 							
-							echo '<textarea name="'.$this->args['opt_name'].'[import_code]" class="large-text" rows="8"></textarea>';
+							
+							echo '<div id="nhp-opts-import-link-wrapper">';
+							
+								echo '<div class="nhp-opts-section-desc">';
+									
+									echo '<p class="description" id="import-link-description">'.apply_filters('nhp-opts-import-link-description',__('Input the URL to another sites options set and hit Import to load the options from that site.', 'nhp-opts')).'</p>';
+								
+								echo '</div>';
+
+								echo '<input type="text" id="import-link-value" name="'.$this->args['opt_name'].'[import_link]" class="large-text" value="" />';
+							
+							echo '</div>';
+							
+							
+							
 							echo '<p id="nhp-opts-import-action"><input type="submit" id="nhp-opts-import" name="'.$this->args['opt_name'].'[import]" class="button-primary" value="'.__('Import', 'nhp-opts').'"> <span>'.apply_filters('nhp-opts-import-warning', __('WARNING! This will overwrite any existing options, please proceed with caution!', 'nhp-opts')).'</span></p>';
 							echo '<div id="import_divide"></div>';
 							
 							echo '<h4>'.__('Export Options', 'nhp-opts').'</h4>';
 							echo '<div class="nhp-opts-section-desc">';
-								echo '<p class="description">'.apply_filters('nhp-opts-backup-description', __('Here you can copy/download your themes current option settings. Keep this safe as you can use it as a backup should anything go wrong. Or you can use it to restore your settings on this site (or any other site).', 'nhp-opts')).'</p>';
+								echo '<p class="description">'.apply_filters('nhp-opts-backup-description', __('Here you can copy/download your themes current option settings. Keep this safe as you can use it as a backup should anything go wrong. Or you can use it to restore your settings on this site (or any other site). You also have the handy option to copy the link to yours sites settings. Which you can then use to duplicate on another site', 'nhp-opts')).'</p>';
 							echo '</div>';
 							
-								echo '<p><a href="javascript:void(0);" id="nhp-opts-export-code-copy" class="button-secondary">Copy</a> <a href="'.add_query_arg(array('page' => $this->args['page_slug'], 'action' => 'download_options'), 'themes.php').'" id="nhp-opts-export-code-dl" class="button-primary">Download</a></p>';
+								echo '<p><a href="javascript:void(0);" id="nhp-opts-export-code-copy" class="button-secondary">Copy</a> <a href="'.add_query_arg(array('feed' => 'nhpopts', 'action' => 'download_options', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY)), site_url()).'" id="nhp-opts-export-code-dl" class="button-primary">Download</a> <a href="javascript:void(0);" id="nhp-opts-export-link" class="button-secondary">Copy Link</a></p>';
 								$backup_options = $this->options;
 								$backup_options['nhp-opts-backup'] = '1';
-								$encoded_options = '###'.base64_encode(serialize($backup_options)).'###';
+								$encoded_options = '###'.serialize($backup_options).'###';
 								echo '<textarea class="large-text" id="nhp-opts-export-code" rows="8">';print_r($encoded_options);echo '</textarea>';
+								echo '<input type="text" class="large-text" id="nhp-opts-export-link-value" value="'.add_query_arg(array('feed' => 'nhpopts', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY)), site_url()).'" />';
 							
 						echo '</div>';
 					}
@@ -746,6 +805,9 @@ class NHP_Options{
 							echo '</div>';
 						echo '</div>';
 					}
+					
+					
+					do_action('nhp-opts-after-section-items', $this);
 				
 					echo '<div class="clear"></div><!--clearfix-->';
 				echo '</div>';
@@ -803,12 +865,50 @@ class NHP_Options{
 						}
 						
 						foreach($errors as $error){
-							echo 'jQuery("#'.$error['id'].'").attr("style", "border-color: #B94A48;");';
+							echo 'jQuery("#'.$error['id'].'").addClass("nhp-opts-field-error");';
 							echo 'jQuery("#'.$error['id'].'").closest("td").append("<span class=\"nhp-opts-th-error\">'.$error['msg'].'</span>");';
 						}
 					echo '});';
 				echo '</script>';
 				delete_transient('nhp-opts-errors');
+			}
+		
+	}//function
+	
+	
+	
+	/**
+	 * JS to display the warnings on the page
+	 *
+	 * @since NHP_Options 1.0.3
+	*/	
+	function _warnings_js(){
+		
+		if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-warnings')){
+				$warnings = get_transient('nhp-opts-warnings');
+				$section_warnings = array();
+				foreach($warnings as $warning){
+					$section_warnings[$warning['section_id']] = (isset($section_warnings[$warning['section_id']]))?$section_warnings[$warning['section_id']]:0;
+					$section_warnings[$warning['section_id']]++;
+				}
+				
+				
+				echo '<script type="text/javascript">';
+					echo 'jQuery(document).ready(function(){';
+						echo 'jQuery("#nhp-opts-field-warnings span").html("'.count($warnings).'");';
+						echo 'jQuery("#nhp-opts-field-warnings").show();';
+						
+						foreach($section_warnings as $sectionkey => $section_warning){
+							echo 'jQuery("#'.$sectionkey.'_section_group_li_a").append("<span class=\"nhp-opts-menu-warning\">'.$section_warning.'</span>");';
+						}
+						
+						foreach($warnings as $warning){
+							echo 'jQuery("#'.$warning['id'].'").addClass("nhp-opts-field-warning");';
+							echo 'jQuery("#'.$warning['id'].'").closest("td").append("<span class=\"nhp-opts-th-warning\">'.$warning['msg'].'</span>");';
+						}
+					echo '});';
+				echo '</script>';
+				delete_transient('nhp-opts-warnings');
 			}
 		
 	}//function
