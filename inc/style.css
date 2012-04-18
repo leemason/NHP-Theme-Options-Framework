@@ -1,0 +1,93 @@
+body{
+	font-family: 'Open Sans', sans-serif;
+}
+.main{
+	margin-top: 30px;
+}
+#main-header{
+	margin-top:60px;
+	background:url("inc/base-noise.jpg");
+	text-align:center;
+	padding:40px 0px 0px 0px;
+	border:1px solid #e9e9e9;
+	border-width: 1px 0px 1px 0px;
+}
+#main-header img{
+	width:90%;
+}
+#main-heading{
+	padding-top:20px;
+}
+
+#intro{
+	margin: 60px 0px;
+}
+#intro blockquote p{
+	margin-bottom:10px;
+}
+
+.heading h1{
+	font-size: 40px;
+ font-weight: 300;
+ margin: 36px 0 27px;
+ text-align: center;
+}
+.heading .h-byline{
+	color: #999999;
+ font-size: 18px;
+ font-weight: 300;
+ line-height: 24px;
+ margin: -18px 0 27px;
+ text-align: center;
+}
+
+.main-icons-row{
+	margin-top:20px;
+}
+.main-icons{
+	float:left;
+	margin:6px 6px 0px 0px;
+}
+h2.main-icons-header{
+	font-size: 18px;
+	font-weight:normal;
+	margin-bottom:4px;
+}
+
+
+.download-info a{
+	display:block;
+	text-align:center;
+	margin:10px 0px;
+}
+.bs-links{
+	text-align:center;
+	margin:20px 0px;
+}
+.bs-links a,
+.bs-links iframe{
+	margin-right:20px;
+}
+
+.footer{
+	margin-bottom:20px;
+}
+
+
+@media (max-width: 979px) {
+	
+ .main{
+ 	margin-top:20px;
+ }
+ #main-header{
+ 	margin-top:0px;
+ }
+ #main-heading{
+ 	padding-bottom:20px;
+ }
+ .main-icons-row{
+ 	padding-top:20px;
+ 	border-top:1px solid #e9e9e9;
+ }
+ 
+}
