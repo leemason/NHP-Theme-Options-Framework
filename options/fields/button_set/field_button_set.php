@@ -61,7 +61,7 @@ class NHP_Options_button_set extends NHP_Options{
 		wp_enqueue_script(
 			'nhp-opts-field-button_set-js', 
 			$this->args['theme_url'].'options/fields/button_set/field_button_set.js', 
-			array('jquery', 'jquery-ui-core'),
+			array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'),
 			time(),
 			true
 		);

@@ -36,9 +36,9 @@ class NHP_Options_radio_img extends NHP_Options{
 
 				$selected = (checked($this->value, $k, false) != '')?' nhp-radio-img-selected':'';
 
-				echo '<label class="nhp-radio-img'.$selected.'" for="'.$this->field['id'].'_'.array_search($k,array_keys($this->field['options'])).'">';
+				echo '<label class="nhp-radio-img'.$selected.' nhp-radio-img-'.$this->field['id'].'" for="'.$this->field['id'].'_'.array_search($k,array_keys($this->field['options'])).'">';
 				echo '<input type="radio" id="'.$this->field['id'].'_'.array_search($k,array_keys($this->field['options'])).'" name="'.$this->args['opt_name'].'['.$this->field['id'].']" '.$class.' value="'.$k.'" '.checked($this->value, $k, false).'/>';
-				echo '<img src="'.$v['img'].'" alt="'.$v['title'].'" onclick="jQuery:nhp_radio_img_select(\''.$this->field['id'].'_'.array_search($k,array_keys($this->field['options'])).'\');" />';
+				echo '<img src="'.$v['img'].'" alt="'.$v['title'].'" onclick="jQuery:nhp_radio_img_select(\''.$this->field['id'].'_'.array_search($k,array_keys($this->field['options'])).'\', \''.$this->field['id'].'\');" />';
 				echo '<br/><span>'.$v['title'].'</span>';
 				echo '</label>';
 				

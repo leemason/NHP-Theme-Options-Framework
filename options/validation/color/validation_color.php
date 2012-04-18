@@ -30,16 +30,44 @@ class NHP_Validation_color extends NHP_Options{
 	*/
 	function validate(){
 		
-		if($this->value[0] != '#'){
-			$this->value = (isset($this->current))?$this->current:'';
-			$this->error = $this->field;
-			return;
-		}
+		if(!is_array($this->value)){
 		
-		if(strlen($this->value) != 7){
-			$this->value = (isset($this->current))?$this->current:'';
-			$this->error = $this->field;
-		}
+			if($this->value[0] != '#'){
+				$this->value = (isset($this->current))?$this->current:'';
+				$this->error = $this->field;
+				return;
+			}
+			
+			if(strlen($this->value) != 7){
+				$this->value = (isset($this->current))?$this->current:'';
+				$this->error = $this->field;
+			}
+			
+		}//if array
+		
+		
+		if(is_array($this->value)){
+			
+			foreach($this->value as $k => $value){
+				
+				if(isset($this->error)){continue;}
+		
+				if($value[0] != '#'){
+					$this->value[$k] = (isset($this->current[$k]))?$this->current[$k]:'';
+					$this->error = $this->field;
+					continue;
+				}
+				
+				if(strlen($value) != 7){
+					$this->value[$k] = (isset($this->current[$k]))?$this->current[$k]:'';
+					$this->error = $this->field;
+				}
+				
+			}//foreach
+			
+		}//if array
+		
+		
 		
 		
 	}//function

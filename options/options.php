@@ -2,19 +2,9 @@
 /*
 changelog
 
-define dir and url before calling class, allows sections array to use framework links for builtin icons much easier
-changed import/export code to just a serialized array
-export options is now a feed url, with secret key validation for security
-allow import through file, or url
-javascript errors now adds class to input fields instead of inline styles
-options panel now loads the last tab viewed whenever accessing the page.
-added support for validation warnings (used by no html and no special chars validation, but extendable the same as errors)
-fixed error where using the upload field type and the wp_editor field type upload functionality by storing the original sentoeditor
-removed php4 construtor to save bytes as wp is now php5.2.4 and above
-moved default option adding to the init hook instead of admin_init for an earlier assignment
-fixed an isset error when setting default values, and reassigned the options array after setting defaults on first activation (function was adding the values, but the options array wasnt updated till after the page loads, so default options existed but were not displayed)
-fixed css issue with farbtastic popup color picker were it was displaying under the radio button set.
-fixed typo on tags select field in theme-options.php
+* Added opt name to feed download of options
+* Added context to class construct - for use later on
+
 
 */
 
@@ -26,7 +16,7 @@ if ( ! class_exists('NHP_Options') ){
 		define('NHP_OPTIONS_URL', trailingslashit(get_template_directory_uri()).'options/');
 	}
 	
-		define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
+	define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
 	
 class NHP_Options{
 	
@@ -39,10 +29,13 @@ class NHP_Options{
 	 *
 	 * @param $array $args Arguments. Class constructor arguments.
 	*/
-	function __construct($sections = array(), $args = array()){
+	function __construct($sections = array(), $args = array(), $context = 'theme'){
 		
 		$this->framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
-		$this->framework_version = '1.0.3';
+		$this->framework_version = '1.0.4';
+		
+		//get context for use throughout framework
+		$this->context = $context;
 		
 		//get this path
 		$this->dir = NHP_OPTIONS_DIR;
@@ -131,6 +124,15 @@ class NHP_Options{
 		//hook into the wp feeds for downloading the exported settings
 		add_action('do_feed_nhpopts', array(&$this, '_download_options'), 1, 1);
 		
+		
+		if($this->context == 'theme' && $this->args['parent_page'] == 'theme'){
+			add_action('admin_bar_menu', array(&$this, '_admin_bar_links'));
+		}
+		
+		if($this->context == 'theme'){
+			add_action('admin_init', array(&$this, '_auto_redirect_activation'));	
+		}
+		
 		//get the options for use later on
 		$this->options = get_option($this->args['opt_name']);
 		
@@ -205,6 +207,10 @@ class NHP_Options{
 		require_once($this->dir.'fields/post_type_select/field_post_type_select.php');
 		require_once($this->dir.'fields/checkbox_hide_below/field_checkbox_hide_below.php');
 		require_once($this->dir.'fields/select_hide_below/field_select_hide_below.php');
+		
+		//V1.0.4
+		require_once($this->dir.'fields/color_gradient/field_color_gradient.php');
+		
 		
 		do_action('nhp-opts-get-fields');
 	}//function
@@ -380,8 +386,8 @@ class NHP_Options{
 	*/
 	function _download_options(){
 		if(!isset($_GET['secret']) || $_GET['secret'] != md5(AUTH_KEY.SECURE_AUTH_KEY)){wp_die('Invalid Secret for options use');exit;}
-		
-		$backup_options = $this->options;
+		if(!isset($_GET['option'])){wp_die('No Option Defined');exit;}
+		$backup_options = get_option($_GET['option']);
 		$backup_options['nhp-opts-backup'] = '1';
 		$content = '###'.serialize($backup_options).'###';
 		
@@ -572,7 +578,7 @@ class NHP_Options{
 					//force validate of custom filed types
 					
 					if(isset($field['type']) && !isset($field['validate'])){
-						if($field['type'] == 'color'){
+						if($field['type'] == 'color' || $field['type'] == 'color_gradient'){
 							$field['validate'] = 'color';
 						}elseif($field['type'] == 'date'){
 							$field['validate'] = 'date';
@@ -763,12 +769,12 @@ class NHP_Options{
 								echo '<p class="description">'.apply_filters('nhp-opts-backup-description', __('Here you can copy/download your themes current option settings. Keep this safe as you can use it as a backup should anything go wrong. Or you can use it to restore your settings on this site (or any other site). You also have the handy option to copy the link to yours sites settings. Which you can then use to duplicate on another site', 'nhp-opts')).'</p>';
 							echo '</div>';
 							
-								echo '<p><a href="javascript:void(0);" id="nhp-opts-export-code-copy" class="button-secondary">Copy</a> <a href="'.add_query_arg(array('feed' => 'nhpopts', 'action' => 'download_options', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY)), site_url()).'" id="nhp-opts-export-code-dl" class="button-primary">Download</a> <a href="javascript:void(0);" id="nhp-opts-export-link" class="button-secondary">Copy Link</a></p>';
+								echo '<p><a href="javascript:void(0);" id="nhp-opts-export-code-copy" class="button-secondary">Copy</a> <a href="'.add_query_arg(array('feed' => 'nhpopts', 'action' => 'download_options', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY), 'option' => $this->args['opt_name']), site_url()).'" id="nhp-opts-export-code-dl" class="button-primary">Download</a> <a href="javascript:void(0);" id="nhp-opts-export-link" class="button-secondary">Copy Link</a></p>';
 								$backup_options = $this->options;
 								$backup_options['nhp-opts-backup'] = '1';
 								$encoded_options = '###'.serialize($backup_options).'###';
 								echo '<textarea class="large-text" id="nhp-opts-export-code" rows="8">';print_r($encoded_options);echo '</textarea>';
-								echo '<input type="text" class="large-text" id="nhp-opts-export-link-value" value="'.add_query_arg(array('feed' => 'nhpopts', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY)), site_url()).'" />';
+								echo '<input type="text" class="large-text" id="nhp-opts-export-link-value" value="'.add_query_arg(array('feed' => 'nhpopts', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY), 'option' => $this->args['opt_name']), site_url()).'" />';
 							
 						echo '</div>';
 					}
@@ -962,6 +968,42 @@ class NHP_Options{
 			}//if
 			
 		}//if $field['type']
+		
+	}//function
+	
+	
+	
+	/**
+	 * Add admin bar links
+	 *
+	 * Adds links to the admin bar for the options page.
+	 *
+	 * @since NHP_Options 1.0.4
+	*/
+	function _admin_bar_links(){
+		global $wp_admin_bar;
+		
+		$wp_admin_bar->add_node( array(
+			'parent' => 'top-secondary',
+			'id' => $this->args['page_slug'], 
+			'title' => $this->args['page_title'],
+			'href' => admin_url( $this->args['parent_page'].'s.php?page='.$this->args['page_slug']) 
+		));
+		
+	}//function
+	
+	
+	/**
+	 * Auto redirect on activation
+	 *
+	 *
+	 * @since NHP_Options 1.0.4
+	*/
+	function _auto_redirect_activation(){
+		global $pagenow;
+		if ( is_admin() && isset($_GET['activated'] ) && $pagenow == "themes.php" ){
+			wp_redirect(admin_url( $this->args['parent_page'].'s.php?page='.$this->args['page_slug']));
+		}//if
 		
 	}//function
 

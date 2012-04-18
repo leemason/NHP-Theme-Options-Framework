@@ -331,7 +331,20 @@ $sections[] = array(
 										'4' => array('title' => 'Opt 4', 'img' => 'images/align-right.png')
 											),//Must provide key => value(array:title|img) pairs for radio options
 						'std' => '2'
-						)									
+						),
+					array(
+						'id' => 'radio_img',
+						'type' => 'radio_img',
+						'title' => __('Radio Image Option For Layout', 'nhp-opts'), 
+						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This uses some of the built in images, you can use them for layout options.', 'nhp-opts'),
+						'options' => array(
+										'1' => array('title' => '1 Column', 'img' => NHP_OPTIONS_URL.'img/1col.png'),
+										'2' => array('title' => '2 Column Left', 'img' => NHP_OPTIONS_URL.'img/2cl.png'),
+										'3' => array('title' => '2 Column Right', 'img' => NHP_OPTIONS_URL.'img/2cr.png')
+											),//Must provide key => value(array:title|img) pairs for radio options
+						'std' => '2'
+						)																		
 					)
 				);
 $sections[] = array(
@@ -368,9 +381,17 @@ $sections[] = array(
 						'id' => '16',
 						'type' => 'color',
 						'title' => __('Color Option', 'nhp-opts'), 
-						'sub_desc' => __('No validation can be done on this field type', 'nhp-opts'),
+						'sub_desc' => __('Only color validation can be done on this field type', 'nhp-opts'),
 						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
 						'std' => '#FFFFFF'
+						),
+					array(
+						'id' => 'color_gradient',
+						'type' => 'color_gradient',
+						'title' => __('Color Gradient Option', 'nhp-opts'), 
+						'sub_desc' => __('Only color validation can be done on this field type', 'nhp-opts'),
+						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts'),
+						'std' => array('from' => '#000000', 'to' => '#FFFFFF')
 						),
 					array(
 						'id' => '17',

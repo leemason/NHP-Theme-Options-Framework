@@ -35,12 +35,12 @@ jQuery(document).ready(function(){
 	);
 	
 	$colorpicker_inputs.each(function(e){
-	jQuery(this).parent().find('.farb-popup').hide();
+	jQuery(this).next('.farb-popup').hide();
 	});
 	
 	
 	$colorpicker_inputs.live('focus',function(e){
-	jQuery(this).parent().find('.farb-popup').show();
+	jQuery(this).next('.farb-popup').show();
 	jQuery(this).parents('li').css({
 	position : 'relative',
 	zIndex : '9999'
@@ -49,7 +49,7 @@ jQuery(document).ready(function(){
 	});
 	
 	$colorpicker_inputs.live('blur',function(e){
-	jQuery(this).parent().find('.farb-popup').hide();
+	jQuery(this).next('.farb-popup').hide();
 	jQuery(this).parents('li').css({
 	zIndex : '0'
 	})

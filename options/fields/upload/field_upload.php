@@ -62,6 +62,8 @@ class NHP_Options_upload extends NHP_Options{
 			true
 		);
 		
+		wp_enqueue_style('thickbox');// thanks to https://github.com/rzepak
+		
 		wp_localize_script('nhp-opts-field-upload-js', 'nhp_upload', array('url' => $this->url.'fields/upload/blank.png'));
 		
 	}//function

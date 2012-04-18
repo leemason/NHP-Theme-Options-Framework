@@ -30,7 +30,7 @@ class NHP_Options_textarea extends NHP_Options{
 		
 		$class = (isset($this->field['class']))?$this->field['class']:'large-text';
 		
-		echo '<textarea id="'.$this->field['id'].'" name="'.$this->args['opt_name'].'['.$this->field['id'].']" class="'.$class.'" rows="6" >'.$this->value.'</textarea>';
+		echo '<textarea id="'.$this->field['id'].'" name="'.$this->args['opt_name'].'['.$this->field['id'].']" class="'.$class.'" rows="6" >'.esc_attr($this->value).'</textarea>';
 		
 		echo ($this->field['desc'] != '')?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
 		
