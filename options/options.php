@@ -20,13 +20,15 @@ fixed typo on tags select field in theme-options.php
 
 if ( ! class_exists('NHP_Options') ){
 	
-	if( file_exists(STYLESHEETPATH.'/options/options.php') ){
+	/*if( file_exists(STYLESHEETPATH.'/options/options.php') ){
 		define('NHP_OPTIONS_URL', trailingslashit(get_stylesheet_directory_uri()).'options/');
 	}elseif( file_exists(TEMPLATEPATH.'/options/options.php') ){
 		define('NHP_OPTIONS_URL', trailingslashit(get_template_directory_uri()).'options/');
-	}
-	
-		define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
+	}*/
+        
+        define('NHP_OPTIONS_URL', trailingslashit('/wp-content/plugins/NHP-Theme-Options-Framework/options/'));
+    
+        define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
 	
 class NHP_Options{
 	
