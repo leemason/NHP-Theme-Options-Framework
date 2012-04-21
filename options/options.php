@@ -2,23 +2,53 @@
 /*
 changelog
 
-* Added opt name to feed download of options
-* Added context to class construct - for use later on
+* Removed sub page support (ready for v3.4 and to solve some extended code blocks)
+* Removed theme/stylesheet constant references
+* Wrapped theme options in a function on init to prevent conflicts
+* Added multi_text field type (no validation allowed yet, but we will get there)
+* Added if clauses to dir and url for latter compatablility
+* Registered stylsheets/javscript files now prefixed with nhp-opts- instead of the theme shortname
+* Download options file now prefixed with option name, not theme shortname
+* Added extra tabs array just like settings sections but for comply custom content
+* Removed support url link as can be done with custom tabs
+* Made theme information tab a custom tab for truley custom display options
+* Removed support for theme activation auto redirect and admin bar link (can be done easily by theme and is a problem when we come to make it available to plugins)
+* Added do_action ***-option_name to all actions to allow actions for specific pages created by the class
+* Framework URL is now defined independant of using theme urls (for when we port)
+* Used constansts for urls in field classes
+* Removed the theme_data variable from the framework
+* Removed context var from constructor
+* Better jquery for tab selection when no prevoius tab set
+* Fields and validation classes only loaded when class is called
+* Bug fixes for menu fields if no menus, or menu locations exist
 
 
 */
 
 if ( ! class_exists('NHP_Options') ){
 	
-	if( file_exists(STYLESHEETPATH.'/options/options.php') ){
-		define('NHP_OPTIONS_URL', trailingslashit(get_stylesheet_directory_uri()).'options/');
-	}elseif( file_exists(TEMPLATEPATH.'/options/options.php') ){
-		define('NHP_OPTIONS_URL', trailingslashit(get_template_directory_uri()).'options/');
+	if(!defined('NHP_OPTIONS_DIR')){
+		define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
 	}
 	
-	define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
+	if(!defined('NHP_OPTIONS_URL')){
+		define('NHP_OPTIONS_URL', site_url(str_replace(ABSPATH, '', trailingslashit(dirname(__FILE__)))));
+	}
 	
 class NHP_Options{
+	
+	public $framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
+	public $framework_version = '1.0.5';
+		
+	public $dir = NHP_OPTIONS_DIR;
+	public $url = NHP_OPTIONS_URL;
+	public $page = '';
+	public $args = array();
+	public $sections = array();
+	public $extra_tabs = array();
+	public $errors = array();
+	public $warnings = array();
+	public $options = array();
 	
 	
 
@@ -29,88 +59,47 @@ class NHP_Options{
 	 *
 	 * @param $array $args Arguments. Class constructor arguments.
 	*/
-	function __construct($sections = array(), $args = array(), $context = 'theme'){
-		
-		$this->framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
-		$this->framework_version = '1.0.4';
-		
-		//get context for use throughout framework
-		$this->context = $context;
-		
-		//get this path
-		$this->dir = NHP_OPTIONS_DIR;
-		//get this frameworks url for images,etc
-		$this->url = NHP_OPTIONS_URL;
-		
-		
-		//get field classes
-		$this->get_fields();
-		
-		//get validation classes
-		$this->get_validation();
-		
-		//get sections
-		$this->sections = apply_filters('nhp-opts-sections', $sections);
+	function __construct($sections = array(), $args = array(), $extra_tabs = array()){
 		
 		$defaults = array();
-
-		$defaults['theme_dir'] = trailingslashit(get_stylesheet_directory());
-		$defaults['theme_url'] = trailingslashit(get_stylesheet_directory_uri());
-		 
-	
-	    $defaults['theme_data'] = get_theme_data($defaults['theme_dir'] .'style.css');
 		
-		$defaults['theme_data']['short_name'] = strtolower(preg_replace('/ /', '_', $defaults['theme_data']['Title']));
+		$defaults['opt_name'] = '';//must be defined by theme/plugin
 		
-		$defaults['opt_name'] = $defaults['theme_data']['short_name'];
-		
-		$defaults['parent_page'] = 'theme';
-		
-		$defaults['menu_title'] = __('Theme Options', 'nhp-opts');
-		$defaults['page_title'] = $defaults['theme_data']['Title'].__(' Theme Options', 'nhp-opts');
-		$defaults['page_slug'] = 'theme_options';
+		$defaults['menu_icon'] = NHP_OPTIONS_URL.'/img/menu_icon.png';
+		$defaults['menu_title'] = __('Options', 'nhp-opts');
+		$defaults['page_icon'] = 'icon-themes';
+		$defaults['page_title'] = __('Options', 'nhp-opts');
+		$defaults['page_slug'] = '_options';
 		$defaults['page_cap'] = 'manage_options';
+		$defaults['page_position'] = 100;
 		
-		$defaults['show_theme_info'] = true;
 		$defaults['show_import_export'] = true;
 		$defaults['dev_mode'] = true;
 		$defaults['stylesheet_override'] = false;
 		
 		$defaults['footer_credit'] = __('<span id="footer-thankyou">Options Panel created using the <a href="'.$this->framework_url.'" target="_blank">NHP Theme Options Framework</a> Version '.$this->framework_version.'</span>', 'nhp-opts');
 		
-		
-		foreach($defaults['theme_data'] as $tkey => $tdata){
-			if(is_array($tdata)){$tdata = implode(', ',$tdata);}
-			//if($tkey != ''){
-				$helpdata[] = '<p><strong>'.$tkey.'</strong> - '.$tdata.'</p>';
-			//}//if
-		}//foreach
-		
-		
-		$defaults['help_tabs'][] = array(
-										'id' => 'nhp-opts-1',
-										'title' => __('Theme Information', 'nhp-opts'),
-										'content' => implode($helpdata)
-										);
-										
+		$defaults['help_tabs'] = array();
 		$defaults['help_sidebar'] = __('', 'nhp-opts');
 		
-		
-		
-		
-		$this->args = wp_parse_args( $args, $defaults );
+		//get args
+		$this->args = wp_parse_args($args, $defaults);
 		$this->args = apply_filters('nhp-opts-args', $this->args);
+		$this->args = apply_filters('nhp-opts-args-'.$this->args['opt_name'], $this->args);
 		
-		//setup the errors and warnings array for later
-		$this->errors = array();
-		$this->warnings = array();
+		//get sections
+		$this->sections = apply_filters('nhp-opts-sections', $sections);
+		$this->sections = apply_filters('nhp-opts-sections-'.$this->args['opt_name'], $this->sections);
+		
+		//get extra tabs
+		$this->extra_tabs = apply_filters('nhp-opts-extra-tabs', $extra_tabs);
+		$this->extra_tabs = apply_filters('nhp-opts-extra-tabs-'.$this->args['opt_name'], $this->extra_tabs);
 		
 		//set option with defaults
 		add_action('init', array(&$this, '_set_default_options'));
 		
 		//options page
 		add_action('admin_menu', array(&$this, '_options_page'));
-		
 		
 		//register setting
 		add_action('admin_init', array(&$this, '_register_setting'));
@@ -124,18 +113,8 @@ class NHP_Options{
 		//hook into the wp feeds for downloading the exported settings
 		add_action('do_feed_nhpopts', array(&$this, '_download_options'), 1, 1);
 		
-		
-		if($this->context == 'theme' && $this->args['parent_page'] == 'theme'){
-			add_action('admin_bar_menu', array(&$this, '_admin_bar_links'));
-		}
-		
-		if($this->context == 'theme'){
-			add_action('admin_init', array(&$this, '_auto_redirect_activation'));	
-		}
-		
 		//get the options for use later on
 		$this->options = get_option($this->args['opt_name']);
-		
 		
 	}//function
 	
@@ -165,84 +144,6 @@ class NHP_Options{
 		}
 	}//function
 	
-	
-	
-	
-	/**
-	 * Get Fields - requires all the built in classes for field use
-	 *
-	 * @since NHP_Options 1.0
-	 *
-	*/
-	function get_fields(){
-		
-		//V1.0.0
-		require_once($this->dir.'fields/text/field_text.php');
-		require_once($this->dir.'fields/textarea/field_textarea.php');
-		require_once($this->dir.'fields/editor/field_editor.php');
-		require_once($this->dir.'fields/checkbox/field_checkbox.php');
-		require_once($this->dir.'fields/multi_checkbox/field_multi_checkbox.php');
-		require_once($this->dir.'fields/select/field_select.php');
-		require_once($this->dir.'fields/multi_select/field_multi_select.php');
-		require_once($this->dir.'fields/radio/field_radio.php');
-		require_once($this->dir.'fields/radio_img/field_radio_img.php');
-		require_once($this->dir.'fields/button_set/field_button_set.php');
-		require_once($this->dir.'fields/upload/field_upload.php');
-		require_once($this->dir.'fields/color/field_color.php');
-		require_once($this->dir.'fields/date/field_date.php');
-		require_once($this->dir.'fields/info/field_info.php');
-		require_once($this->dir.'fields/divide/field_divide.php');
-		
-		//V1.0.1
-		require_once($this->dir.'fields/pages_select/field_pages_select.php');
-		require_once($this->dir.'fields/pages_multi_select/field_pages_multi_select.php');
-		require_once($this->dir.'fields/posts_select/field_posts_select.php');
-		require_once($this->dir.'fields/posts_multi_select/field_posts_multi_select.php');
-		require_once($this->dir.'fields/tags_select/field_tags_select.php');
-		require_once($this->dir.'fields/tags_multi_select/field_tags_multi_select.php');
-		require_once($this->dir.'fields/cats_select/field_cats_select.php');
-		require_once($this->dir.'fields/cats_multi_select/field_cats_multi_select.php');
-		require_once($this->dir.'fields/menu_select/field_menu_select.php');
-		require_once($this->dir.'fields/menu_location_select/field_menu_location_select.php');
-		require_once($this->dir.'fields/post_type_select/field_post_type_select.php');
-		require_once($this->dir.'fields/checkbox_hide_below/field_checkbox_hide_below.php');
-		require_once($this->dir.'fields/select_hide_below/field_select_hide_below.php');
-		
-		//V1.0.4
-		require_once($this->dir.'fields/color_gradient/field_color_gradient.php');
-		
-		
-		do_action('nhp-opts-get-fields');
-	}//function
-	
-	
-	/**
-	 * Get Validation - requires all the built in classes for validation use
-	 *
-	 * @since NHP_Options 1.0
-	 *
-	*/
-	function get_validation(){
-		
-		//V1.0.0
-		require_once($this->dir.'validation/email/validation_email.php');
-		require_once($this->dir.'validation/no_html/validation_no_html.php');
-		require_once($this->dir.'validation/html/validation_html.php');
-		require_once($this->dir.'validation/html_custom/validation_html_custom.php');
-		require_once($this->dir.'validation/url/validation_url.php');
-		require_once($this->dir.'validation/numeric/validation_numeric.php');
-		require_once($this->dir.'validation/js/validation_js.php');
-		
-		//V1.0.1
-		require_once($this->dir.'validation/color/validation_color.php');
-		require_once($this->dir.'validation/date/validation_date.php');
-		require_once($this->dir.'validation/comma_numeric/validation_comma_numeric.php');
-		require_once($this->dir.'validation/no_special_chars/validation_no_special_chars.php');
-		require_once($this->dir.'validation/preg_replace/validation_preg_replace.php');
-		require_once($this->dir.'validation/str_replace/validation_str_replace.php');
-
-		do_action('nhp-opts-get-validation');
-	}//function
 	
 	
 	/**
@@ -300,14 +201,17 @@ class NHP_Options{
 	 * @since NHP_Options 1.0
 	*/
 	function _options_page(){
-		$addpage = 'add_'.$this->args['parent_page'].'_page';
-		$this->page = $addpage(
-						$this->args['page_title'], 
-						$this->args['menu_title'], 
-						$this->args['page_cap'], 
-						$this->args['page_slug'], 
-						array(&$this, '_options_page_html')
-					);
+
+			$this->page = add_menu_page(
+							$this->args['page_title'], 
+							$this->args['menu_title'], 
+							$this->args['page_cap'], 
+							$this->args['page_slug'], 
+							array(&$this, '_options_page_html'),
+							$this->args['menu_icon'],
+							$this->args['page_position']
+						);				
+					
 		add_action('admin_print_styles-'.$this->page, array(&$this, '_enqueue'));
 		add_action('load-'.$this->page, array(&$this, '_load_page'));
 	}//function	
@@ -321,7 +225,7 @@ class NHP_Options{
 	function _enqueue(){
 		
 		wp_register_style(
-				$this->args['theme_data']['short_name'].'-css', 
+				'nhp-opts-css', 
 				$this->url.'css/options.css',
 				array('farbtastic'),
 				time(),
@@ -337,13 +241,13 @@ class NHP_Options{
 		);
 			
 			
-		if(!$this->args['stylesheet_override']){
-			wp_enqueue_style($this->args['theme_data']['short_name'].'-css');
+		if(false === $this->args['stylesheet_override']){
+			wp_enqueue_style('nhp-opts-css');
 		}
 		
 		
 		wp_enqueue_script(
-			$this->args['theme_data']['short_name'].'-js', 
+			'nhp-opts-js', 
 			$this->url.'js/options.js', 
 			array('jquery'),
 			time(),
@@ -351,6 +255,8 @@ class NHP_Options{
 		);
 		
 		do_action('nhp-opts-enqueue');
+		
+		do_action('nhp-opts-enqueue-'.$this->args['opt_name']);
 		
 		
 		foreach($this->sections as $k => $section){
@@ -362,9 +268,13 @@ class NHP_Options{
 					if(isset($field['type'])){
 					
 						$field_class = 'NHP_Options_'.$field['type'];
+						
+						if(!class_exists($field_class)){
+							require_once($this->dir.'fields/'.$field['type'].'/field_'.$field['type'].'.php');
+						}//if
 				
 						if(class_exists($field_class) && method_exists($field_class, 'enqueue')){
-							$enqueue = new $field_class();
+							$enqueue = new $field_class('','',$this);
 							$enqueue->enqueue();
 						}//if
 						
@@ -395,7 +305,7 @@ class NHP_Options{
 		if(isset($_GET['action']) && $_GET['action'] == 'download_options'){
 			header('Content-Description: File Transfer');
 			header('Content-type: application/txt');
-			header('Content-Disposition: attachment; filename="'.$this->args['theme_data']['short_name'].'_options_'.date('d-m-Y').'.txt"');
+			header('Content-Disposition: attachment; filename="'.$_GET['option'].'_options_'.date('d-m-Y').'.txt"');
 			header('Content-Transfer-Encoding: binary');
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate');
@@ -422,7 +332,7 @@ class NHP_Options{
 		add_action('admin_head', array(&$this, 'admin_head'));
 		
 		//do admin footer text hook
-		add_filter( 'admin_footer_text', array(&$this, 'admin_footer_text'));
+		add_filter('admin_footer_text', array(&$this, 'admin_footer_text'));
 		
 		$screen = get_current_screen();
 		
@@ -438,6 +348,8 @@ class NHP_Options{
 		
 		do_action('nhp-opts-load-page', $screen);
 		
+		do_action('nhp-opts-load-page-'.$this->args['opt_name'], $screen);
+		
 	}//function
 	
 	
@@ -449,6 +361,8 @@ class NHP_Options{
 	function admin_head(){
 		
 		do_action('nhp-opts-admin-head', $this);
+		
+		do_action('nhp-opts-admin-head-'.$this->args['opt_name'], $this);
 		
 	}
 	
@@ -494,6 +408,8 @@ class NHP_Options{
 		
 		do_action('nhp-opts-register-settings');
 		
+		do_action('nhp-opts-register-settings-'.$this->args['opt_name']);
+		
 	}//function
 	
 	
@@ -529,7 +445,7 @@ class NHP_Options{
 			$plugin_options = $this->_default_values();
 			return $plugin_options;
 		}//if set defaults
-		
+
 		
 		//validate fields (if needed)
 		$plugin_options = $this->_validate_values($plugin_options, $this->options);
@@ -543,6 +459,8 @@ class NHP_Options{
 		}//if errors
 		
 		do_action('nhp-opts-options-validate', $plugin_options, $this->options);
+		
+		do_action('nhp-opts-options-validate-'.$this->args['opt_name'], $plugin_options, $this->options);
 		
 		
 		unset($plugin_options['defaults']);
@@ -571,6 +489,8 @@ class NHP_Options{
 				foreach($section['fields'] as $fieldk => $field){
 					$field['section_id'] = $k;
 					
+					if(isset($field['type']) && $field['type'] == 'multi_text'){continue;}//we cant validate this yet
+					
 					if(!isset($plugin_options[$field['id']]) || $plugin_options[$field['id']] == ''){
 						continue;
 					}
@@ -587,6 +507,11 @@ class NHP_Options{
 	
 					if(isset($field['validate'])){
 						$validate = 'NHP_Validation_'.$field['validate'];
+						
+						if(!class_exists($validate)){
+							require_once($this->dir.'validation/'.$field['validate'].'/validation_'.$field['validate'].'.php');
+						}//if
+						
 						if(class_exists($validate)){
 							$validation = new $validate($field, $plugin_options[$field['id']], $options[$field['id']]);
 							$plugin_options[$field['id']] = $validation->value;
@@ -638,11 +563,13 @@ class NHP_Options{
 	function _options_page_html(){
 		
 		echo '<div class="wrap">';
-			echo '<div id="'.apply_filters('nhp-opts-page-icon-id', 'icon-themes').'" class="icon32"><br/></div>';
+			echo '<div id="'.$this->args['page_icon'].'" class="icon32"><br/></div>';
 			echo '<h2 id="nhp-opts-heading">'.get_admin_page_title().'</h2>';
 			echo (isset($this->args['intro_text']))?$this->args['intro_text']:'';
 			
 			do_action('nhp-opts-page-before-form');
+			
+			do_action('nhp-opts-page-before-form-'.$this->args['opt_name']);
 
 			echo '<form method="post" action="options.php" enctype="multipart/form-data" id="nhp-opts-form-wrapper">';
 				settings_fields($this->args['opt_name'].'_group');
@@ -682,32 +609,28 @@ class NHP_Options{
 						
 						do_action('nhp-opts-after-section-menu-items', $this);
 						
-						if($this->args['show_import_export'] == true){
+						do_action('nhp-opts-after-section-menu-items-'.$this->args['opt_name'], $this);
+						
+						if(true === $this->args['show_import_export']){
 							echo '<li id="import_export_default_section_group_li" class="nhp-opts-group-tab-link-li">';
 									echo '<a href="javascript:void(0);" id="import_export_default_section_group_li_a" class="nhp-opts-group-tab-link-a" data-rel="import_export_default"><img src="'.$this->url.'img/glyphicons/glyphicons_082_roundabout.png" /> '.__('Import / Export', 'nhp-opts').'</a>';
 							echo '</li>';
 							echo '<li class="divide">&nbsp;</li>';
 						}//if
 						
-						if(file_exists($this->args['theme_dir'].'README.html')){
-							echo '<li id="read_me_default_section_group_li" class="nhp-opts-group-tab-link-li">';
-								echo '<a href="javascript:void(0);" id="read_me_default_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="read_me_default"><img src="'.$this->url.'img/glyphicons/glyphicons_071_book.png" /> '.__('Documentation', 'nhp-opts').'</a>';
-							echo '</li>';
-						}//if
 						
-						if($this->args['show_theme_info'] == true){
-							echo '<li id="theme_info_default_section_group_li" class="nhp-opts-group-tab-link-li">';
-									echo '<a href="javascript:void(0);" id="theme_info_default_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="theme_info_default"><img src="'.$this->url.'img/glyphicons/glyphicons_195_circle_info.png" /> '.__('Theme Information', 'nhp-opts').'</a>';
-							echo '</li>';
-						}//if
 						
-						if(isset($this->args['support_url'])){
-							echo '<li id="support_link_default_section_group_li" class="nhp-opts-group-tab-link-li">';
-								echo '<a href="'.$this->args['support_url'].'" id="support_link_default_section_group_li_a" class="custom-tab support-link" target="_blank"><img src="'.$this->url.'img/glyphicons/glyphicons_050_link.png" /> '.__('Support', 'nhp-opts').'</a>';
-							echo '</li>';
-						}//if
 						
-						if($this->args['dev_mode'] == true){
+						
+						foreach($this->extra_tabs as $k => $tab){
+							$icon = (!isset($tab['icon']))?'<img src="'.$this->url.'img/glyphicons/glyphicons_019_cogwheel.png" /> ':'<img src="'.$tab['icon'].'" /> ';
+							echo '<li id="'.$k.'_section_group_li" class="nhp-opts-group-tab-link-li">';
+								echo '<a href="javascript:void(0);" id="'.$k.'_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="'.$k.'">'.$icon.$tab['title'].'</a>';
+							echo '</li>';
+						}
+
+						
+						if(true === $this->args['dev_mode']){
 							echo '<li id="dev_mode_default_section_group_li" class="nhp-opts-group-tab-link-li">';
 									echo '<a href="javascript:void(0);" id="dev_mode_default_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="dev_mode_default"><img src="'.$this->url.'img/glyphicons/glyphicons_195_circle_info.png" /> '.__('Dev Mode Info', 'nhp-opts').'</a>';
 							echo '</li>';
@@ -717,16 +640,15 @@ class NHP_Options{
 				echo '</div>';
 				
 				echo '<div id="nhp-opts-main">';
+				
 					foreach($this->sections as $k => $section){
 						echo '<div id="'.$k.'_section_group'.'" class="nhp-opts-group-tab">';
 							do_settings_sections($k.'_section_group');
 						echo '</div>';
-					}
+					}					
 					
 					
-					
-					
-					if($this->args['show_import_export'] == true){
+					if(true === $this->args['show_import_export']){
 						echo '<div id="import_export_default_section_group'.'" class="nhp-opts-group-tab">';
 							echo '<h3>'.__('Import / Export Options', 'nhp-opts').'</h3>';
 							
@@ -781,29 +703,16 @@ class NHP_Options{
 					
 					
 					
-					
-					
-					if($this->args['show_theme_info'] == true){
-						echo '<div id="theme_info_default_section_group'.'" class="nhp-opts-group-tab">';
-							echo '<h3>'.$this->args['theme_data']['Title'].'</h3>';
-							echo '<div class="nhp-opts-section-desc">';
-							echo '<p class="nhp-opts-theme-data description theme-uri">'.__('<strong>Theme URL:</strong> ', 'nhp-opts').'<a href="'.$this->args['theme_data']['URI'].'" target="_blank">'.$this->args['theme_data']['URI'].'</a></p>';
-							echo '<p class="nhp-opts-theme-data description theme-author">'.__('<strong>Author:</strong> ', 'nhp-opts').$this->args['theme_data']['Author'].'</p>';
-							echo '<p class="nhp-opts-theme-data description theme-version">'.__('<strong>Version:</strong> ', 'nhp-opts').$this->args['theme_data']['Version'].'</p>';
-							echo '<p class="nhp-opts-theme-data description theme-description">'.$this->args['theme_data']['Description'].'</p>';
-							echo '<p class="nhp-opts-theme-data description theme-tags">'.__('<strong>Tags:</strong> ', 'nhp-opts').implode(', ', $this->args['theme_data']['Tags']).'</p>';
-							do_action('nhp-opts-after-theme-info', $this->args['theme_data']);
-							echo '</div>';
+					foreach($this->extra_tabs as $k => $tab){
+						echo '<div id="'.$k.'_section_group'.'" class="nhp-opts-group-tab">';
+						echo '<h3>'.$tab['title'].'</h3>';
+						echo $tab['content'];
 						echo '</div>';
 					}
+
 					
-					if(file_exists($this->args['theme_dir'].'README.html')){
-						echo '<div id="read_me_default_section_group'.'" class="nhp-opts-group-tab">';
-							echo nl2br(file_get_contents($this->args['theme_dir'].'README.html'));
-						echo '</div>';
-					}//if
 					
-					if($this->args['dev_mode'] == true){
+					if(true === $this->args['dev_mode']){
 						echo '<div id="dev_mode_default_section_group'.'" class="nhp-opts-group-tab">';
 							echo '<h3>'.__('Dev Mode Info', 'nhp-opts').'</h3>';
 							echo '<div class="nhp-opts-section-desc">';
@@ -814,6 +723,8 @@ class NHP_Options{
 					
 					
 					do_action('nhp-opts-after-section-items', $this);
+					
+					do_action('nhp-opts-after-section-items-'.$this->args['opt_name'], $this);
 				
 					echo '<div class="clear"></div><!--clearfix-->';
 				echo '</div>';
@@ -837,6 +748,8 @@ class NHP_Options{
 			echo '</form>';
 			
 			do_action('nhp-opts-page-after-form');
+			
+			do_action('nhp-opts-page-after-form-'.$this->args['opt_name']);
 			
 			echo '<div class="clear"></div><!--clearfix-->';	
 		echo '</div><!--wrap-->';
@@ -950,8 +863,10 @@ class NHP_Options{
 		if(isset($field['callback']) && function_exists($field['callback'])){
 			$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
 			do_action('nhp-opts-before-field', $field, $value);
+			do_action('nhp-opts-before-field-'.$this->args['opt_name'], $field, $value);
 			call_user_func($field['callback'], $field, $value);
 			do_action('nhp-opts-after-field', $field, $value);
+			do_action('nhp-opts-after-field-'.$this->args['opt_name'], $field, $value);
 			return;
 		}
 		
@@ -960,50 +875,21 @@ class NHP_Options{
 			$field_class = 'NHP_Options_'.$field['type'];
 			
 			if(class_exists($field_class)){
+				require_once($this->dir.'fields/'.$field['type'].'/field_'.$field['type'].'.php');
+			}//if
+			
+			if(class_exists($field_class)){
 				$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
 				do_action('nhp-opts-before-field', $field, $value);
-				$render = new $field_class($field, $value);
+				do_action('nhp-opts-before-field-'.$this->args['opt_name'], $field, $value);
+				$render = '';
+				$render = new $field_class($field, $value, $this);
 				$render->render();
 				do_action('nhp-opts-after-field', $field, $value);
+				do_action('nhp-opts-after-field-'.$this->args['opt_name'], $field, $value);
 			}//if
 			
 		}//if $field['type']
-		
-	}//function
-	
-	
-	
-	/**
-	 * Add admin bar links
-	 *
-	 * Adds links to the admin bar for the options page.
-	 *
-	 * @since NHP_Options 1.0.4
-	*/
-	function _admin_bar_links(){
-		global $wp_admin_bar;
-		
-		$wp_admin_bar->add_node( array(
-			'parent' => 'top-secondary',
-			'id' => $this->args['page_slug'], 
-			'title' => $this->args['page_title'],
-			'href' => admin_url( $this->args['parent_page'].'s.php?page='.$this->args['page_slug']) 
-		));
-		
-	}//function
-	
-	
-	/**
-	 * Auto redirect on activation
-	 *
-	 *
-	 * @since NHP_Options 1.0.4
-	*/
-	function _auto_redirect_activation(){
-		global $pagenow;
-		if ( is_admin() && isset($_GET['activated'] ) && $pagenow == "themes.php" ){
-			wp_redirect(admin_url( $this->args['parent_page'].'s.php?page='.$this->args['page_slug']));
-		}//if
 		
 	}//function
 

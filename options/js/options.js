@@ -2,7 +2,7 @@ jQuery(document).ready(function(){
 	
 	if(jQuery('#last_tab').val() == ''){
 
-		jQuery('#0_section_group').slideDown('fast');
+		jQuery('.nhp-opts-group-tab:first').slideDown('fast');
 		jQuery('#nhp-opts-group-menu li:first').addClass('active');
 	
 	}else{
@@ -12,6 +12,7 @@ jQuery(document).ready(function(){
 		jQuery('#'+tabid+'_section_group_li').addClass('active');
 		
 	}
+	
 	
 	
 	jQuery('.nhp-opts-group-tab-link-a').click(function(){

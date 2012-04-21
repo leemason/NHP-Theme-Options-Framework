@@ -8,9 +8,9 @@ class NHP_Options_tags_multi_select extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0.1
 	*/
-	function __construct($field = array(), $value =''){
+	function __construct($field = array(), $value ='', $parent){
 		
-		parent::__construct();
+		parent::__construct($parent->sections, $parent->args, $parent->extra_tabs);
 		$this->field = $field;
 		$this->value = $value;
 		//$this->render();

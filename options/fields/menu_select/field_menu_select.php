@@ -8,9 +8,9 @@ class NHP_Options_menu_select extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0.1
 	*/
-	function __construct($field = array(), $value =''){
+	function __construct($field = array(), $value ='', $parent){
 		
-		parent::__construct();
+		parent::__construct($parent->sections, $parent->args, $parent->extra_tabs);
 		$this->field = $field;
 		$this->value = $value;
 		//$this->render();
@@ -36,9 +36,11 @@ class NHP_Options_menu_select extends NHP_Options{
 		$args = wp_parse_args($this->field['args'], array());
 			
 		$menus = wp_get_nav_menus($args);
-		foreach ( $menus as $menu ) {
-			echo '<option value="'.$menu->term_id.'"'.selected($this->value, $menu->term_id, false).'>'.$menu->name.'</option>';
-		}
+		if($menus){
+			foreach ( $menus as $menu ) {
+				echo '<option value="'.$menu->term_id.'"'.selected($this->value, $menu->term_id, false).'>'.$menu->name.'</option>';
+			}
+		}//if
 
 		echo '</select>';
 

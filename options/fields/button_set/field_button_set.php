@@ -8,9 +8,9 @@ class NHP_Options_button_set extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0
 	*/
-	function __construct($field = array(), $value =''){
+	function __construct($field = array(), $value ='', $parent){
 		
-		parent::__construct();
+		parent::__construct($parent->sections, $parent->args, $parent->extra_tabs);
 		$this->field = $field;
 		$this->value = $value;
 		//$this->render();
@@ -60,7 +60,7 @@ class NHP_Options_button_set extends NHP_Options{
 
 		wp_enqueue_script(
 			'nhp-opts-field-button_set-js', 
-			$this->args['theme_url'].'options/fields/button_set/field_button_set.js', 
+			NHP_OPTIONS_URL.'fields/button_set/field_button_set.js', 
 			array('jquery', 'jquery-ui-core', 'jquery-ui-dialog'),
 			time(),
 			true

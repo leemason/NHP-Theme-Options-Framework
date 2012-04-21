@@ -8,9 +8,9 @@ class NHP_Options_upload extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0
 	*/
-	function __construct($field = array(), $value =''){
+	function __construct($field = array(), $value ='', $parent = ''){
 		
-		parent::__construct();
+		parent::__construct($parent->sections, $parent->args, $parent->extra_tabs);
 		$this->field = $field;
 		$this->value = $value;
 		
@@ -56,7 +56,7 @@ class NHP_Options_upload extends NHP_Options{
 		
 		wp_enqueue_script(
 			'nhp-opts-field-upload-js', 
-			$this->url.'fields/upload/field_upload.js', 
+			NHP_OPTIONS_URL.'fields/upload/field_upload.js', 
 			array('jquery', 'thickbox', 'media-upload'),
 			time(),
 			true

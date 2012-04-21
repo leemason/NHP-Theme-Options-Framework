@@ -8,9 +8,9 @@ class NHP_Options_checkbox_hide_below extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0.1
 	*/
-	function __construct($field = array(), $value =''){
+	function __construct($field = array(), $value ='', $parent){
 		
-		parent::__construct();
+		parent::__construct($parent->sections, $parent->args, $parent->extra_tabs);
 		$this->field = $field;
 		$this->value = $value;
 		//$this->render();
@@ -50,7 +50,7 @@ class NHP_Options_checkbox_hide_below extends NHP_Options{
 		
 		wp_enqueue_script(
 			'nhp-opts-checkbox-hide-below-js', 
-			$this->args['theme_url'].'options/fields/checkbox_hide_below/field_checkbox_hide_below.js', 
+			NHP_OPTIONS_URL.'fields/checkbox_hide_below/field_checkbox_hide_below.js', 
 			array('jquery'),
 			time(),
 			true

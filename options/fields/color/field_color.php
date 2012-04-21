@@ -8,9 +8,9 @@ class NHP_Options_color extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0
 	*/
-	function __construct($field = array(), $value =''){
+	function __construct($field = array(), $value ='', $parent){
 		
-		parent::__construct();
+		parent::__construct($parent->sections, $parent->args, $parent->extra_tabs);
 		$this->field = $field;
 		$this->value = $value;
 		//$this->render();
@@ -53,7 +53,7 @@ class NHP_Options_color extends NHP_Options{
 		
 		wp_enqueue_script(
 			'nhp-opts-field-color-js', 
-			$this->args['theme_url'].'options/fields/color/field_color.js', 
+			NHP_OPTIONS_URL.'fields/color/field_color.js', 
 			array('jquery', 'farbtastic'),
 			time(),
 			true

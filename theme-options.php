@@ -33,7 +33,7 @@ function add_another_section($sections){
 	return $sections;
 	
 }//function
-add_filter('nhp-opts-sections', 'add_another_section');
+//add_filter('nhp-opts-sections-twenty_eleven', 'add_another_section');
 
 
 /*
@@ -48,7 +48,7 @@ function change_framework_args($args){
 	return $args;
 	
 }//function
-add_filter('nhp-opts-args', 'change_framework_args');
+//add_filter('nhp-opts-args-twenty_eleven', 'change_framework_args');
 
 
 
@@ -67,6 +67,7 @@ add_filter('nhp-opts-args', 'change_framework_args');
  *
  */
 
+function setup_framework_options(){
 $args = array();
 
 //Set it to dev mode to view the class settings/info in the form - default is false
@@ -77,9 +78,6 @@ $args['dev_mode'] = true;
 
 //Add HTML before the form
 $args['intro_text'] = __('<p>This is the HTML which can be displayed before the form, it isnt required, but more info is always better. Anything goes in terms of markup here, any HTML.</p>', 'nhp-opts');
-
-//Set the support URL - if not set the link/tab isnt shown in the form
-$args['support_url'] = 'http://no-half-pixels.com';
 
 //Setup custom links in the footer for share icons
 $args['share_icons']['twitter'] = array(
@@ -93,29 +91,32 @@ $args['share_icons']['linked_in'] = array(
 										'img' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_337_linked_in.png'
 										);
 
-//Set this to false to stop the Theme Information tab from being displayed - default functionality is to allow
-//$args['show_theme_info'] = false;
-
 //Choose to disable the import/export feature
 //$args['show_import_export'] = false;
 
 //Choose a custom option name for your theme options, the default is the theme name in lowercase with spaces replaced by underscores
-//$args['opt_name'] = $defaults['theme_data']['short_name'];
+$args['opt_name'] = 'twenty_eleven';
 
-//Custom menu location for options page - default is "theme" - credits to https://github.com/MartyThornley
-//$args['parent_page'] = 'theme';
+//Custom menu icon
+//$args['menu_icon'] = '';
 
-//Custom menu title for options page - default is "Theme Options"
-//$args['menu_title'] = __('Theme Options', 'nhp-opts');
+//Custom menu title for options page - default is "Options"
+$args['menu_title'] = __('Theme Options', 'nhp-opts');
 
-//Custom Page Title for options page - default is "Theme name Theme Options"
-//$args['page_title'] = $defaults['theme_data']['Title'].__(' Theme Options', 'nhp-opts');
+//Custom Page Title for options page - default is "Options"
+$args['page_title'] = __('Twenty Eleven Theme Options', 'nhp-opts');
 
 //Custom page slug for options page (wp-admin/themes.php?page=***) - default is "nhp_theme_options"
-//$args['page_slug'] = 'nhp_theme_options';
+$args['page_slug'] = 'theme_options';
 
 //Custom page capability - default is set to "manage_options"
 //$args['page_cap'] = 'manage_options';
+
+//custom page location - default 100 - must be unique or will override other items
+//$args['page_position'] = 10;
+
+//Custom page icon class (used to override the page icon next to heading)
+//$args['page_icon'] = 'icon-themes';
 		
 //Set ANY custom page help tabs - displayed using the new help tab API, show in order of definition		
 $args['help_tabs'][] = array(
@@ -173,6 +174,13 @@ $sections[] = array(
 						'validate' => 'email',
 						'msg' => 'custom error message',
 						'std' => 'test@test.com'
+						),
+					array(
+						'id' => 'multi_text',
+						'type' => 'multi_text',
+						'title' => __('Multi Text Option', 'nhp-opts'),
+						'sub_desc' => __('This is a little space under the Field Title in the Options table, additonal info is good in here.', 'nhp-opts'),
+						'desc' => __('This is the description field, again good for additional info.', 'nhp-opts')
 						),
 					array(
 						'id' => '3',
@@ -571,11 +579,38 @@ $sections[] = array(
 						)				
 					)
 				);
+				
+				
+	$tabs = array();
+	
+	$theme_data = get_theme_data(trailingslashit(get_stylesheet_directory()) .'style.css');
+	$theme_info = '<div class="nhp-opts-section-desc">';
+	$theme_info .= '<p class="nhp-opts-theme-data description theme-uri">'.__('<strong>Theme URL:</strong> ', 'nhp-opts').'<a href="'.$theme_data['URI'].'" target="_blank">'.$theme_data['URI'].'</a></p>';
+	$theme_info .= '<p class="nhp-opts-theme-data description theme-author">'.__('<strong>Author:</strong> ', 'nhp-opts').$theme_data['Author'].'</p>';
+	$theme_info .= '<p class="nhp-opts-theme-data description theme-version">'.__('<strong>Version:</strong> ', 'nhp-opts').$theme_data['Version'].'</p>';
+	$theme_info .= '<p class="nhp-opts-theme-data description theme-description">'.$theme_data['Description'].'</p>';
+	$theme_info .= '<p class="nhp-opts-theme-data description theme-tags">'.__('<strong>Tags:</strong> ', 'nhp-opts').implode(', ', $theme_data['Tags']).'</p>';
+	$theme_info .= '</div>';
+	
+	
+	
+	$tabs['theme_info'] = array(
+					'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_195_circle_info.png',
+					'title' => __('Theme Information', 'nhp-opts'),
+					'content' => $theme_info
+					);
+					
+	$tabs['theme_docs'] = array(
+					'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_071_book.png',
+					'title' => __('Documentation', 'nhp-opts'),
+					'content' => nl2br(file_get_contents(trailingslashit(get_stylesheet_directory()).'README.html'))
+					);
 
-global $NHP_Options;
-$NHP_Options = new NHP_Options($sections, $args);
+	global $NHP_Options;
+	$NHP_Options = new NHP_Options($sections, $args, $tabs);
 
-
+}//function
+add_action('init', 'setup_framework_options', 0);
 
 /*
  * 

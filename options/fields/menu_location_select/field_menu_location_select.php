@@ -8,9 +8,9 @@ class NHP_Options_menu_location_select extends NHP_Options{
 	 *
 	 * @since NHP_Options 1.0.1
 	*/
-	function __construct($field = array(), $value =''){
+	function __construct($field = array(), $value ='', $parent){
 		
-		parent::__construct();
+		parent::__construct($parent->sections, $parent->args, $parent->extra_tabs);
 		$this->field = $field;
 		$this->value = $value;
 		//$this->render();
@@ -33,10 +33,11 @@ class NHP_Options_menu_location_select extends NHP_Options{
 
 		echo '<select id="'.$this->field['id'].'" name="'.$this->args['opt_name'].'['.$this->field['id'].']" '.$class.' >';
 		
-
-		foreach ( $_wp_registered_nav_menus as $k => $v ) {
-			echo '<option value="'.$k.'"'.selected($this->value, $k, false).'>'.$v.'</option>';
-		}
+		if($_wp_registered_nav_menus){
+			foreach ( $_wp_registered_nav_menus as $k => $v ) {
+				echo '<option value="'.$k.'"'.selected($this->value, $k, false).'>'.$v.'</option>';
+			}
+		}//if
 
 		echo '</select>';
 	
