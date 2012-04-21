@@ -6,7 +6,7 @@ body{
 }
 #main-header{
 	margin-top:60px;
-	background:url("inc/base-noise.jpg");
+	background:url("base-noise.jpg");
 	text-align:center;
 	padding:40px 0px 0px 0px;
 	border:1px solid #e9e9e9;
