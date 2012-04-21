@@ -10,14 +10,9 @@ changelog
 
 if ( ! class_exists('NHP_Options') ){
 	
-	if( file_exists(STYLESHEETPATH.'/options/options.php') ){
-		define('NHP_OPTIONS_URL', trailingslashit(get_stylesheet_directory_uri()).'options/');
-	}elseif( file_exists(TEMPLATEPATH.'/options/options.php') ){
-		define('NHP_OPTIONS_URL', trailingslashit(get_template_directory_uri()).'options/');
-	}
-	
-	define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
-	
+	define( 'NHP_OPTIONS_DIR', trailingslashit( dirname( __FILE__ ) ) );
+	define( 'NHP_OPTIONS_URL', str_replace( ABSPATH, trailingslashit( get_site_url() ), NHP_OPTIONS_DIR ) );
+
 class NHP_Options{
 	
 	
