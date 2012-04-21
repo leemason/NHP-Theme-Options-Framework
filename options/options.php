@@ -1,30 +1,4 @@
 <?php
-/*
-changelog
-
-* Removed sub page support (ready for v3.4 and to solve some extended code blocks)
-* Removed theme/stylesheet constant references
-* Wrapped theme options in a function on init to prevent conflicts
-* Added multi_text field type (no validation allowed yet, but we will get there)
-* Added if clauses to dir and url for latter compatablility
-* Registered stylsheets/javscript files now prefixed with nhp-opts- instead of the theme shortname
-* Download options file now prefixed with option name, not theme shortname
-* Added extra tabs array just like settings sections but for comply custom content
-* Removed support url link as can be done with custom tabs
-* Made theme information tab a custom tab for truley custom display options
-* Removed support for theme activation auto redirect and admin bar link (can be done easily by theme and is a problem when we come to make it available to plugins)
-* Added do_action ***-option_name to all actions to allow actions for specific pages created by the class
-* Framework URL is now defined independant of using theme urls (for when we port)
-* Used constansts for urls in field classes
-* Removed the theme_data variable from the framework
-* Removed context var from constructor
-* Better jquery for tab selection when no prevoius tab set
-* Fields and validation classes only loaded when class is called
-* Bug fixes for menu fields if no menus, or menu locations exist
-
-
-*/
-
 if ( ! class_exists('NHP_Options') ){
 	
 	if(!defined('NHP_OPTIONS_DIR')){
