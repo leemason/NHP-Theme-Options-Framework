@@ -100,9 +100,22 @@ class NHP_Options{
 	 *
 	 * @param $array $args Arguments. Class constructor arguments.
 	*/
-	function get($opt_name){
-		return $this->options[$opt_name];
+	function get($opt_name, $default = null){
+		return (!empty($this->options[$opt_name])) ? $this->options[$opt_name] : $default;
 	}//function
+	
+	/**
+	 * ->set(); This is used to set an arbitrary option in the options array
+	 *
+	 * @since NHP_Options 1.0.1
+	 * 
+	 * @param string $opt_name the name of the option being added
+	 * @param mixed $value the value of the option being added
+	 */
+	function set($opt_name, $value) {
+		$this->options[$opt_name] = $value;
+		update_option($this->args['opt_name'], $this->options);
+	}
 	
 	/**
 	 * ->show(); This is used to echo and option value from the options array
