@@ -32,7 +32,7 @@ class NHP_Options_textarea extends NHP_Options{
 		
 		echo '<textarea id="'.$this->field['id'].'" name="'.$this->args['opt_name'].'['.$this->field['id'].']" class="'.$class.'" rows="6" >'.esc_attr($this->value).'</textarea>';
 		
-		echo ($this->field['desc'] != '')?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	

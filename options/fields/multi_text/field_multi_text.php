@@ -53,7 +53,7 @@ class NHP_Options_multi_text extends NHP_Options{
 		
 		echo '<a href="javascript:void(0);" class="nhp-opts-multi-text-add" rel-id="'.$this->field['id'].'-ul" rel-name="'.$this->args['opt_name'].'['.$this->field['id'].'][]">'.__('Add More', 'nhp-opts').'</a><br/>';
 		
-		echo ($this->field['desc'] != '')?' <span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?' <span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	
