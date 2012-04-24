@@ -39,12 +39,10 @@ class NHP_Options_posts_multi_select extends NHP_Options{
 			$selected = (is_array($this->value) && in_array($post->ID, $this->value))?' selected="selected"':'';
 			echo '<option value="'.$post->ID.'"'.$selected.'>'.$post->post_title.'</option>';
 		}
-		
-		
 
 		echo '</select>';
 
-		echo ($this->field['desc'] != '')?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	

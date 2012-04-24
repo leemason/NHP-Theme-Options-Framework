@@ -37,7 +37,7 @@ class NHP_Options_editor extends NHP_Options{
 			);
 		wp_editor($this->value, $this->field['id'], $settings );
 		
-		echo ($this->field['desc'] != '')?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	

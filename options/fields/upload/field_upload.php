@@ -39,7 +39,7 @@ class NHP_Options_upload extends NHP_Options{
 		echo ' <a href="javascript:void(0);" class="nhp-opts-upload button-secondary"'.$upload.' rel-id="'.$this->field['id'].'">'.__('Browse', 'nhp-opts').'</a>';
 		echo ' <a href="javascript:void(0);" class="nhp-opts-upload-remove"'.$remove.' rel-id="'.$this->field['id'].'">'.__('Remove Upload', 'nhp-opts').'</a>';
 		
-		echo ($this->field['desc'] != '')?'<br/><br/><span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?'<br/><br/><span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	

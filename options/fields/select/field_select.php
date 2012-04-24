@@ -17,8 +17,8 @@ class NHP_Options_select extends NHP_Options{
 		
 	}//function
 	
-	
-	
+
+
 	/**
 	 * Field Render Function.
 	 *
@@ -40,7 +40,7 @@ class NHP_Options_select extends NHP_Options{
 
 		echo '</select>';
 
-		echo ($this->field['desc'] != '')?' <span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?' <span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	

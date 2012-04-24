@@ -40,7 +40,7 @@ class NHP_Options_select_hide_below extends NHP_Options{
 
 		echo '</select>';
 
-		echo ($this->field['desc'] != '')?' <span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?' <span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	
