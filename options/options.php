@@ -830,7 +830,9 @@ class NHP_Options{
 		
 		$id = rtrim($section['id'], '_section');
 		
-		echo '<div class="nhp-opts-section-desc">'.$this->sections[$id]['desc'].'</div>';
+		if(isset($this->sections[$id]['desc']) && !empty($this->sections[$id]['desc'])) {
+			echo '<div class="nhp-opts-section-desc">'.$this->sections[$id]['desc'].'</div>';
+		}
 		
 	}//function
 	
