@@ -38,13 +38,13 @@ class NHP_Validation_date extends NHP_Options{
 			return;
 		}
 		
-		if($this->value[3] != '/'){
+		if($this->value[2] != '/'){
 			$this->value = (isset($this->current))?$this->current:'';
 			$this->error = $this->field;
 			return;
 		}
 		
-		if($this->value[6] != '/'){
+		if($this->value[5] != '/'){
 			$this->value = (isset($this->current))?$this->current:'';
 			$this->error = $this->field;
 		}
