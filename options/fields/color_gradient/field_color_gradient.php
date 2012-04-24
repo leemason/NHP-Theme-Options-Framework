@@ -38,7 +38,7 @@ class NHP_Options_color_gradient extends NHP_Options{
 		echo __(' To:', 'nhp-opts').' <input type="text" id="'.$this->field['id'].'-to" name="'.$this->args['opt_name'].'['.$this->field['id'].'][to]" value="'.$this->value['to'].'" class="'.$class.' popup-colorpicker" style="width:70px;"/>';
 		echo '<div class="farb-popup"><div class="farb-popup-inside"><div id="'.$this->field['id'].'-topicker" class="color-picker"></div></div></div>';
 		
-		echo ($this->field['desc'] != '')?' <span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?' <span class="description">'.$this->field['desc'].'</span>':'';
 		
 		echo '</div>';
 		

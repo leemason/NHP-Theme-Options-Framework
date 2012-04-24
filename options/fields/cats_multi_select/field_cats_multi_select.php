@@ -44,7 +44,7 @@ class NHP_Options_cats_multi_select extends NHP_Options{
 
 		echo '</select>';
 
-		echo ($this->field['desc'] != '')?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
 		
 	}//function
 	

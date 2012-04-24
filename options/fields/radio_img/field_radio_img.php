@@ -42,10 +42,9 @@ class NHP_Options_radio_img extends NHP_Options{
 				echo '<br/><span>'.$v['title'].'</span>';
 				echo '</label>';
 				
-				
 			}//foreach
 
-		echo ($this->field['desc'] != '')?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
+		echo (isset($this->field['desc']) && !empty($this->field['desc']))?'<br/><span class="description">'.$this->field['desc'].'</span>':'';
 		
 		echo '</fieldset>';
 		
