@@ -30,7 +30,7 @@ class NHP_Options_checkbox_hide_below extends NHP_Options{
 		
 		$class = (isset($this->field['class']))?$this->field['class']:'';
 		
-		echo ($this->field['desc'] != '')?' <label for="'.$this->args['opt_name'].'['.$this->field['id'].']">':'';
+		echo ($this->field['desc'] != '')?' <label for="'.$this->field['id'].'">':'';
 		
 		echo '<input type="checkbox" id="'.$this->field['id'].'" name="'.$this->args['opt_name'].'['.$this->field['id'].']" value="1" class="'.$class.' nhp-opts-checkbox-hide-below" '.checked($this->value, '1', false).' />';
 		
