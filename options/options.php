@@ -45,6 +45,8 @@ class NHP_Options{
 		$defaults['page_title'] = __('Options', 'nhp-opts');
 		$defaults['page_slug'] = '_options';
 		$defaults['page_cap'] = 'manage_options';
+		$defaults['page_type'] = 'menu';
+		$defaults['page_parent'] = '';
 		$defaults['page_position'] = 100;
 		
 		$defaults['show_import_export'] = true;
@@ -161,7 +163,7 @@ class NHP_Options{
 		
 		//fix for notice on first page load
 		$defaults['last_tab'] = 0;
-		
+
 		return $defaults;
 		
 	}
@@ -188,7 +190,19 @@ class NHP_Options{
 	 * @since NHP_Options 1.0
 	*/
 	function _options_page(){
-
+		if($this->args['page_type'] == 'submenu'){
+			if(!isset($this->args['page_parent']) || empty($this->args['page_parent'])){
+				$this->args['page_parent'] = 'themes.php';
+			}
+			$this->page = add_submenu_page(
+							$this->args['page_parent'],
+							$this->args['page_title'], 
+							$this->args['menu_title'], 
+							$this->args['page_cap'], 
+							$this->args['page_slug'], 
+							array(&$this, '_options_page_html')
+						);
+		}else{
 			$this->page = add_menu_page(
 							$this->args['page_title'], 
 							$this->args['menu_title'], 
@@ -197,8 +211,8 @@ class NHP_Options{
 							array(&$this, '_options_page_html'),
 							$this->args['menu_icon'],
 							$this->args['page_position']
-						);				
-					
+						);
+
 		add_action('admin_print_styles-'.$this->page, array(&$this, '_enqueue'));
 		add_action('load-'.$this->page, array(&$this, '_load_page'));
 	}//function	
