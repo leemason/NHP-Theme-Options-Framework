@@ -112,6 +112,13 @@ $args['page_slug'] = 'theme_options';
 //Custom page capability - default is set to "manage_options"
 //$args['page_cap'] = 'manage_options';
 
+//page type - "menu" (adds a top menu section) or "submenu" (adds a submenu) - default is set to "menu"
+//$args['page_type'] = 'submenu';
+
+//parent menu - default is set to "themes.php" (Appearance)
+//the list of available parent menus is available here: http://codex.wordpress.org/Function_Reference/add_submenu_page#Parameters
+//$args['page_parent'] = 'themes.php';
+
 //custom page location - default 100 - must be unique or will override other items
 //$args['page_position'] = 10;
 
