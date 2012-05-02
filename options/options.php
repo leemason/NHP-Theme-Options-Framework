@@ -212,6 +212,7 @@ class NHP_Options{
 							$this->args['menu_icon'],
 							$this->args['page_position']
 						);
+		}//else
 
 		add_action('admin_print_styles-'.$this->page, array(&$this, '_enqueue'));
 		add_action('load-'.$this->page, array(&$this, '_load_page'));

@@ -4,9 +4,7 @@
  * Require the framework class before doing anything else, so we can use the defined urls and dirs
  *
  */
-if(!class_exists('NHP_Options')){
-	require_once( dirname( __FILE__ ) . '/options/options.php' );
-}
+require_once( dirname( __FILE__ ) . '/options/options.php' );
 
 /*
  * 
@@ -606,12 +604,14 @@ $sections[] = array(
 					'title' => __('Theme Information', 'nhp-opts'),
 					'content' => $theme_info
 					);
-					
-	$tabs['theme_docs'] = array(
-					'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_071_book.png',
-					'title' => __('Documentation', 'nhp-opts'),
-					'content' => nl2br(file_get_contents(trailingslashit(get_stylesheet_directory()).'README.html'))
-					);
+	
+	if(file_exists(trailingslashit(get_stylesheet_directory()).'README.html')){
+		$tabs['theme_docs'] = array(
+						'icon' => NHP_OPTIONS_URL.'img/glyphicons/glyphicons_071_book.png',
+						'title' => __('Documentation', 'nhp-opts'),
+						'content' => nl2br(file_get_contents(trailingslashit(get_stylesheet_directory()).'README.html'))
+						);
+	}//if
 
 	global $NHP_Options;
 	$NHP_Options = new NHP_Options($sections, $args, $tabs);
