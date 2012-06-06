@@ -1,14 +1,14 @@
-# NHP Theme Options V1.0.5 #
+# NHP Theme Options V1.0.6 #
 
 Theme options framework which uses the  [WordPress Settings API](http://codex.wordpress.org/Settings_API "WordPress Settings API"), Custom Error/Validation Handling, Custom Field/Validation Types (which are easily extendable), and import/export functionality.
 
 ## Simple Usage ##
 
 
-Simply require the *theme-options.php* file in your themes **functions.php** file, like so:
+Simply include the ```nhp-options.php``` file in your themes ```functions.php``` file, like so:
 
 ```php
-require( dirname( __FILE__ ) . '/theme-options.php' );
+get_template_part('nhp', 'options');
 ```
 
 Then change the settings as written in the **theme-options.php** file.

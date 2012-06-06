@@ -1,5 +1,6 @@
 jQuery(document).ready(function(){
 	
+	
 	if(jQuery('#last_tab').val() == ''){
 
 		jQuery('.nhp-opts-group-tab:first').slideDown('fast');
@@ -14,6 +15,11 @@ jQuery(document).ready(function(){
 	}
 	
 	
+	jQuery('input[name="'+nhp_opts.opt_name+'[defaults]"]').click(function(){
+		if(!confirm(nhp_opts.reset_confirm)){
+			return false;
+		}
+	});
 	
 	jQuery('.nhp-opts-group-tab-link-a').click(function(){
 		relid = jQuery(this).attr('data-rel');

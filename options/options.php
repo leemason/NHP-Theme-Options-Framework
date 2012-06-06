@@ -1,18 +1,22 @@
 <?php
 if ( ! class_exists('NHP_Options') ){
 	
+	// windows-proof constants: replace backward by forward slashes - thanks to: https://github.com/peterbouwmeester
+	$fslashed_dir = trailingslashit(str_replace('\\','/',dirname(__FILE__)));
+	$fslashed_abs = trailingslashit(str_replace('\\','/',ABSPATH));
+	
 	if(!defined('NHP_OPTIONS_DIR')){
-		define('NHP_OPTIONS_DIR', trailingslashit(dirname(__FILE__)));
+		define('NHP_OPTIONS_DIR', $fslashed_dir);
 	}
 	
 	if(!defined('NHP_OPTIONS_URL')){
-		define('NHP_OPTIONS_URL', site_url(str_replace(ABSPATH, '', trailingslashit(dirname(__FILE__)))));
+		define('NHP_OPTIONS_URL', site_url(str_replace( $fslashed_abs, '', $fslashed_dir )));
 	}
 	
 class NHP_Options{
 	
-	public $framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
-	public $framework_version = '1.0.5';
+	protected $framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
+	protected $framework_version = '1.0.6';
 		
 	public $dir = NHP_OPTIONS_DIR;
 	public $url = NHP_OPTIONS_URL;
@@ -39,6 +43,8 @@ class NHP_Options{
 		
 		$defaults['opt_name'] = '';//must be defined by theme/plugin
 		
+		$defaults['google_api_key'] = '';//must be defined for use with google webfonts field type
+		
 		$defaults['menu_icon'] = NHP_OPTIONS_URL.'/img/menu_icon.png';
 		$defaults['menu_title'] = __('Options', 'nhp-opts');
 		$defaults['page_icon'] = 'icon-themes';
@@ -48,6 +54,7 @@ class NHP_Options{
 		$defaults['page_type'] = 'menu';
 		$defaults['page_parent'] = '';
 		$defaults['page_position'] = 100;
+		$defaults['allow_sub_menu'] = true;
 		
 		$defaults['show_import_export'] = true;
 		$defaults['dev_mode'] = true;
@@ -60,16 +67,13 @@ class NHP_Options{
 		
 		//get args
 		$this->args = wp_parse_args($args, $defaults);
-		$this->args = apply_filters('nhp-opts-args', $this->args);
 		$this->args = apply_filters('nhp-opts-args-'.$this->args['opt_name'], $this->args);
 		
 		//get sections
-		$this->sections = apply_filters('nhp-opts-sections', $sections);
-		$this->sections = apply_filters('nhp-opts-sections-'.$this->args['opt_name'], $this->sections);
+		$this->sections = apply_filters('nhp-opts-sections-'.$this->args['opt_name'], $sections);
 		
 		//get extra tabs
-		$this->extra_tabs = apply_filters('nhp-opts-extra-tabs', $extra_tabs);
-		$this->extra_tabs = apply_filters('nhp-opts-extra-tabs-'.$this->args['opt_name'], $this->extra_tabs);
+		$this->extra_tabs = apply_filters('nhp-opts-extra-tabs-'.$this->args['opt_name'], $extra_tabs);
 		
 		//set option with defaults
 		add_action('init', array(&$this, '_set_default_options'));
@@ -81,13 +85,13 @@ class NHP_Options{
 		add_action('admin_init', array(&$this, '_register_setting'));
 		
 		//add the js for the error handling before the form
-		add_action('nhp-opts-page-before-form', array(&$this, '_errors_js'), 1);
+		add_action('nhp-opts-page-before-form-'.$this->args['opt_name'], array(&$this, '_errors_js'), 1);
 		
 		//add the js for the warning handling before the form
-		add_action('nhp-opts-page-before-form', array(&$this, '_warnings_js'), 2);
+		add_action('nhp-opts-page-before-form-'.$this->args['opt_name'], array(&$this, '_warnings_js'), 2);
 		
 		//hook into the wp feeds for downloading the exported settings
-		add_action('do_feed_nhpopts', array(&$this, '_download_options'), 1, 1);
+		add_action('do_feed_nhpopts-'.$this->args['opt_name'], array(&$this, '_download_options'), 1, 1);
 		
 		//get the options for use later on
 		$this->options = get_option($this->args['opt_name']);
@@ -114,9 +118,11 @@ class NHP_Options{
 	 * @param string $opt_name the name of the option being added
 	 * @param mixed $value the value of the option being added
 	 */
-	function set($opt_name, $value) {
-		$this->options[$opt_name] = $value;
-		update_option($this->args['opt_name'], $this->options);
+	function set($opt_name = '', $value = '') {
+		if($opt_name != ''){
+			$this->options[$opt_name] = $value;
+			update_option($this->args['opt_name'], $this->options);
+		}//if
 	}
 	
 	/**
@@ -126,10 +132,12 @@ class NHP_Options{
 	 *
 	 * @param $array $args Arguments. Class constructor arguments.
 	*/
-	function show($opt_name){
+	function show($opt_name, $default = ''){
 		$option = $this->get($opt_name);
-		if(!is_array($option)){
+		if(!is_array($option) && $option != ''){
 			echo $option;
+		}elseif($default != ''){
+			echo $default;
 		}
 	}//function
 	
@@ -212,11 +220,75 @@ class NHP_Options{
 							$this->args['menu_icon'],
 							$this->args['page_position']
 						);
+						
+		if(true === $this->args['allow_sub_menu']){
+						
+			//this is needed to remove the top level menu item from showing in the submenu
+			add_submenu_page($this->args['page_slug'],$this->args['page_title'],'',$this->args['page_cap'],$this->args['page_slug'],'__return_null');
+						
+						
+			foreach($this->sections as $k => $section){
+							
+				add_submenu_page(
+						$this->args['page_slug'],
+						$section['title'], 
+						$section['title'], 
+						$this->args['page_cap'], 
+						$this->args['page_slug'].'&tab='.$k, 
+						'__return_null'
+				);
+					
+			}
+			
+			if(true === $this->args['show_import_export']){
+				
+				add_submenu_page(
+						$this->args['page_slug'],
+						__('Import / Export', 'nhp-opts'), 
+						__('Import / Export', 'nhp-opts'), 
+						$this->args['page_cap'], 
+						$this->args['page_slug'].'&tab=import_export_default', 
+						'__return_null'
+				);
+					
+			}//if
+						
+
+			foreach($this->extra_tabs as $k => $tab){
+				
+				add_submenu_page(
+						$this->args['page_slug'],
+						$tab['title'], 
+						$tab['title'], 
+						$this->args['page_cap'], 
+						$this->args['page_slug'].'&tab='.$k, 
+						'__return_null'
+				);
+				
+			}
+
+			if(true === $this->args['dev_mode']){
+						
+				add_submenu_page(
+						$this->args['page_slug'],
+						__('Dev Mode Info', 'nhp-opts'), 
+						__('Dev Mode Info', 'nhp-opts'), 
+						$this->args['page_cap'], 
+						$this->args['page_slug'].'&tab=dev_mode_default', 
+						'__return_null'
+				);
+				
+			}//if
+
+		}//if			
+						
+			
 		}//else
 
 		add_action('admin_print_styles-'.$this->page, array(&$this, '_enqueue'));
 		add_action('load-'.$this->page, array(&$this, '_load_page'));
 	}//function	
+	
 	
 
 	/**
@@ -255,8 +327,7 @@ class NHP_Options{
 			time(),
 			true
 		);
-		
-		do_action('nhp-opts-enqueue');
+		wp_localize_script('nhp-opts-js', 'nhp_opts', array('reset_confirm' => __('Are you sure? Resetting will loose all custom values.', 'nhp-opts'), 'opt_name' => $this->args['opt_name']));
 		
 		do_action('nhp-opts-enqueue-'.$this->args['opt_name']);
 		
@@ -297,9 +368,10 @@ class NHP_Options{
 	 * @since NHP_Options 1.0.1
 	*/
 	function _download_options(){
+		//-'.$this->args['opt_name']
 		if(!isset($_GET['secret']) || $_GET['secret'] != md5(AUTH_KEY.SECURE_AUTH_KEY)){wp_die('Invalid Secret for options use');exit;}
-		if(!isset($_GET['option'])){wp_die('No Option Defined');exit;}
-		$backup_options = get_option($_GET['option']);
+		if(!isset($_GET['feed'])){wp_die('No Feed Defined');exit;}
+		$backup_options = get_option(str_replace('nhpopts-','',$_GET['feed']));
 		$backup_options['nhp-opts-backup'] = '1';
 		$content = '###'.serialize($backup_options).'###';
 		
@@ -307,7 +379,7 @@ class NHP_Options{
 		if(isset($_GET['action']) && $_GET['action'] == 'download_options'){
 			header('Content-Description: File Transfer');
 			header('Content-type: application/txt');
-			header('Content-Disposition: attachment; filename="'.$_GET['option'].'_options_'.date('d-m-Y').'.txt"');
+			header('Content-Disposition: attachment; filename="'.str_replace('nhpopts-','',$_GET['feed']).'_options_'.date('d-m-Y').'.txt"');
 			header('Content-Transfer-Encoding: binary');
 			header('Expires: 0');
 			header('Cache-Control: must-revalidate');
@@ -348,8 +420,6 @@ class NHP_Options{
 			$screen->set_help_sidebar($this->args['help_sidebar']);
 		}//if
 		
-		do_action('nhp-opts-load-page', $screen);
-		
 		do_action('nhp-opts-load-page-'.$this->args['opt_name'], $screen);
 		
 	}//function
@@ -362,11 +432,9 @@ class NHP_Options{
 	*/
 	function admin_head(){
 		
-		do_action('nhp-opts-admin-head', $this);
-		
 		do_action('nhp-opts-admin-head-'.$this->args['opt_name'], $this);
 		
-	}
+	}//function
 	
 	
 	function admin_footer_text($footer_text){
@@ -407,8 +475,6 @@ class NHP_Options{
 			}//if(isset($section['fields'])){
 			
 		}//foreach
-		
-		do_action('nhp-opts-register-settings');
 		
 		do_action('nhp-opts-register-settings-'.$this->args['opt_name']);
 		
@@ -453,14 +519,12 @@ class NHP_Options{
 		$plugin_options = $this->_validate_values($plugin_options, $this->options);
 		
 		if($this->errors){
-			set_transient('nhp-opts-errors', $this->errors, 1000 );		
+			set_transient('nhp-opts-errors-'.$this->args['opt_name'], $this->errors, 1000 );		
 		}//if errors
 		
 		if($this->warnings){
-			set_transient('nhp-opts-warnings', $this->warnings, 1000 );		
+			set_transient('nhp-opts-warnings-'.$this->args['opt_name'], $this->warnings, 1000 );		
 		}//if errors
-		
-		do_action('nhp-opts-options-validate', $plugin_options, $this->options);
 		
 		do_action('nhp-opts-options-validate-'.$this->args['opt_name'], $plugin_options, $this->options);
 		
@@ -569,29 +633,30 @@ class NHP_Options{
 			echo '<h2 id="nhp-opts-heading">'.get_admin_page_title().'</h2>';
 			echo (isset($this->args['intro_text']))?$this->args['intro_text']:'';
 			
-			do_action('nhp-opts-page-before-form');
-			
 			do_action('nhp-opts-page-before-form-'.$this->args['opt_name']);
 
 			echo '<form method="post" action="options.php" enctype="multipart/form-data" id="nhp-opts-form-wrapper">';
 				settings_fields($this->args['opt_name'].'_group');
+				
+				$this->options['last_tab'] = (isset($_GET['tab']) && !get_transient('nhp-opts-saved'))?$_GET['tab']:$this->options['last_tab'];
+				
 				echo '<input type="hidden" id="last_tab" name="'.$this->args['opt_name'].'[last_tab]" value="'.$this->options['last_tab'].'" />';
 				
 				echo '<div id="nhp-opts-header">';
-					echo '<input type="submit" name="submit" value="'.__('Save Changes', 'nhp-opts').'" class="button-primary" />';
-					echo '<input type="submit" name="'.$this->args['opt_name'].'[defaults]" value="'.__('Reset to Defaults', 'nhp-opts').'" class="button-secondary" />';
+					submit_button('', 'primary', '', false);
+					submit_button(__('Reset to Defaults', 'nhp-opts'), 'secondary', $this->args['opt_name'].'[defaults]', false);
 					echo '<div class="clear"></div><!--clearfix-->';
 				echo '</div>';
 				
 					if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-saved') == '1'){
 						if(isset($this->options['imported']) && $this->options['imported'] == 1){
-							echo '<div id="nhp-opts-imported">'.__('<strong>Settings Imported!</strong>', 'nhp-opts').'</div>';
+							echo '<div id="nhp-opts-imported">'.apply_filters('nhp-opts-imported-text-'.$this->args['opt_name'], __('<strong>Settings Imported!</strong>', 'nhp-opts')).'</div>';
 						}else{
-							echo '<div id="nhp-opts-save">'.__('<strong>Settings Saved!</strong>', 'nhp-opts').'</div>';
+							echo '<div id="nhp-opts-save">'.apply_filters('nhp-opts-saved-text-'.$this->args['opt_name'], __('<strong>Settings Saved!</strong>', 'nhp-opts')).'</div>';
 						}
 						delete_transient('nhp-opts-saved');
 					}
-					echo '<div id="nhp-opts-save-warn">'.__('<strong>Settings have changed!, you should save them!</strong>', 'nhp-opts').'</div>';
+					echo '<div id="nhp-opts-save-warn">'.apply_filters('nhp-opts-changed-text-'.$this->args['opt_name'], __('<strong>Settings have changed!, you should save them!</strong>', 'nhp-opts')).'</div>';
 					echo '<div id="nhp-opts-field-errors">'.__('<strong><span></span> error(s) were found!</strong>', 'nhp-opts').'</div>';
 					
 					echo '<div id="nhp-opts-field-warnings">'.__('<strong><span></span> warning(s) were found!</strong>', 'nhp-opts').'</div>';
@@ -603,19 +668,17 @@ class NHP_Options{
 						foreach($this->sections as $k => $section){
 							$icon = (!isset($section['icon']))?'<img src="'.$this->url.'img/glyphicons/glyphicons_019_cogwheel.png" /> ':'<img src="'.$section['icon'].'" /> ';
 							echo '<li id="'.$k.'_section_group_li" class="nhp-opts-group-tab-link-li">';
-								echo '<a href="javascript:void(0);" id="'.$k.'_section_group_li_a" class="nhp-opts-group-tab-link-a" data-rel="'.$k.'">'.$icon.$section['title'].'</a>';
+								echo '<a href="javascript:void(0);" id="'.$k.'_section_group_li_a" class="nhp-opts-group-tab-link-a" data-rel="'.$k.'">'.$icon.'<span>'.$section['title'].'</span></a>';
 							echo '</li>';
 						}
 						
 						echo '<li class="divide">&nbsp;</li>';
 						
-						do_action('nhp-opts-after-section-menu-items', $this);
-						
 						do_action('nhp-opts-after-section-menu-items-'.$this->args['opt_name'], $this);
 						
 						if(true === $this->args['show_import_export']){
 							echo '<li id="import_export_default_section_group_li" class="nhp-opts-group-tab-link-li">';
-									echo '<a href="javascript:void(0);" id="import_export_default_section_group_li_a" class="nhp-opts-group-tab-link-a" data-rel="import_export_default"><img src="'.$this->url.'img/glyphicons/glyphicons_082_roundabout.png" /> '.__('Import / Export', 'nhp-opts').'</a>';
+									echo '<a href="javascript:void(0);" id="import_export_default_section_group_li_a" class="nhp-opts-group-tab-link-a" data-rel="import_export_default"><img src="'.$this->url.'img/glyphicons/glyphicons_082_roundabout.png" /> <span>'.__('Import / Export', 'nhp-opts').'</span></a>';
 							echo '</li>';
 							echo '<li class="divide">&nbsp;</li>';
 						}//if
@@ -627,14 +690,14 @@ class NHP_Options{
 						foreach($this->extra_tabs as $k => $tab){
 							$icon = (!isset($tab['icon']))?'<img src="'.$this->url.'img/glyphicons/glyphicons_019_cogwheel.png" /> ':'<img src="'.$tab['icon'].'" /> ';
 							echo '<li id="'.$k.'_section_group_li" class="nhp-opts-group-tab-link-li">';
-								echo '<a href="javascript:void(0);" id="'.$k.'_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="'.$k.'">'.$icon.$tab['title'].'</a>';
+								echo '<a href="javascript:void(0);" id="'.$k.'_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="'.$k.'">'.$icon.'<span>'.$tab['title'].'</span></a>';
 							echo '</li>';
 						}
 
 						
 						if(true === $this->args['dev_mode']){
 							echo '<li id="dev_mode_default_section_group_li" class="nhp-opts-group-tab-link-li">';
-									echo '<a href="javascript:void(0);" id="dev_mode_default_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="dev_mode_default"><img src="'.$this->url.'img/glyphicons/glyphicons_195_circle_info.png" /> '.__('Dev Mode Info', 'nhp-opts').'</a>';
+									echo '<a href="javascript:void(0);" id="dev_mode_default_section_group_li_a" class="nhp-opts-group-tab-link-a custom-tab" data-rel="dev_mode_default"><img src="'.$this->url.'img/glyphicons/glyphicons_195_circle_info.png" /> <span>'.__('Dev Mode Info', 'nhp-opts').'</span></a>';
 							echo '</li>';
 						}//if
 						
@@ -693,12 +756,12 @@ class NHP_Options{
 								echo '<p class="description">'.apply_filters('nhp-opts-backup-description', __('Here you can copy/download your themes current option settings. Keep this safe as you can use it as a backup should anything go wrong. Or you can use it to restore your settings on this site (or any other site). You also have the handy option to copy the link to yours sites settings. Which you can then use to duplicate on another site', 'nhp-opts')).'</p>';
 							echo '</div>';
 							
-								echo '<p><a href="javascript:void(0);" id="nhp-opts-export-code-copy" class="button-secondary">Copy</a> <a href="'.add_query_arg(array('feed' => 'nhpopts', 'action' => 'download_options', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY), 'option' => $this->args['opt_name']), site_url()).'" id="nhp-opts-export-code-dl" class="button-primary">Download</a> <a href="javascript:void(0);" id="nhp-opts-export-link" class="button-secondary">Copy Link</a></p>';
+								echo '<p><a href="javascript:void(0);" id="nhp-opts-export-code-copy" class="button-secondary">Copy</a> <a href="'.add_query_arg(array('feed' => 'nhpopts-'.$this->args['opt_name'], 'action' => 'download_options', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY)), site_url()).'" id="nhp-opts-export-code-dl" class="button-primary">Download</a> <a href="javascript:void(0);" id="nhp-opts-export-link" class="button-secondary">Copy Link</a></p>';
 								$backup_options = $this->options;
 								$backup_options['nhp-opts-backup'] = '1';
 								$encoded_options = '###'.serialize($backup_options).'###';
 								echo '<textarea class="large-text" id="nhp-opts-export-code" rows="8">';print_r($encoded_options);echo '</textarea>';
-								echo '<input type="text" class="large-text" id="nhp-opts-export-link-value" value="'.add_query_arg(array('feed' => 'nhpopts', 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY), 'option' => $this->args['opt_name']), site_url()).'" />';
+								echo '<input type="text" class="large-text" id="nhp-opts-export-link-value" value="'.add_query_arg(array('feed' => 'nhpopts-'.$this->args['opt_name'], 'secret' => md5(AUTH_KEY.SECURE_AUTH_KEY)), site_url()).'" />';
 							
 						echo '</div>';
 					}
@@ -724,8 +787,6 @@ class NHP_Options{
 					}
 					
 					
-					do_action('nhp-opts-after-section-items', $this);
-					
 					do_action('nhp-opts-after-section-items-'.$this->args['opt_name'], $this);
 				
 					echo '<div class="clear"></div><!--clearfix-->';
@@ -742,14 +803,12 @@ class NHP_Options{
 						echo '</div>';
 					}
 					
-					echo '<input type="submit" name="submit" value="'.__('Save Changes', 'nhp-opts').'" class="button-primary" />';
-					echo '<input type="submit" name="'.$this->args['opt_name'].'[defaults]" value="'.__('Reset to Defaults', 'nhp-opts').'" class="button-secondary" />';
+					submit_button('', 'primary', '', false);
+					submit_button(__('Reset to Defaults', 'nhp-opts'), 'secondary', $this->args['opt_name'].'[defaults]', false);
 					echo '<div class="clear"></div><!--clearfix-->';
 				echo '</div>';
 			
 			echo '</form>';
-			
-			do_action('nhp-opts-page-after-form');
 			
 			do_action('nhp-opts-page-after-form-'.$this->args['opt_name']);
 			
@@ -767,8 +826,8 @@ class NHP_Options{
 	*/	
 	function _errors_js(){
 		
-		if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-errors')){
-				$errors = get_transient('nhp-opts-errors');
+		if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-errors-'.$this->args['opt_name'])){
+				$errors = get_transient('nhp-opts-errors-'.$this->args['opt_name']);
 				$section_errors = array();
 				foreach($errors as $error){
 					$section_errors[$error['section_id']] = (isset($section_errors[$error['section_id']]))?$section_errors[$error['section_id']]:0;
@@ -791,7 +850,7 @@ class NHP_Options{
 						}
 					echo '});';
 				echo '</script>';
-				delete_transient('nhp-opts-errors');
+				delete_transient('nhp-opts-errors-'.$this->args['opt_name']);
 			}
 		
 	}//function
@@ -805,8 +864,8 @@ class NHP_Options{
 	*/	
 	function _warnings_js(){
 		
-		if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-warnings')){
-				$warnings = get_transient('nhp-opts-warnings');
+		if(isset($_GET['settings-updated']) && $_GET['settings-updated'] == 'true' && get_transient('nhp-opts-warnings-'.$this->args['opt_name'])){
+				$warnings = get_transient('nhp-opts-warnings-'.$this->args['opt_name']);
 				$section_warnings = array();
 				foreach($warnings as $warning){
 					$section_warnings[$warning['section_id']] = (isset($section_warnings[$warning['section_id']]))?$section_warnings[$warning['section_id']]:0;
@@ -829,10 +888,12 @@ class NHP_Options{
 						}
 					echo '});';
 				echo '</script>';
-				delete_transient('nhp-opts-warnings');
+				delete_transient('nhp-opts-warnings-'.$this->args['opt_name']);
 			}
 		
 	}//function
+	
+	
 
 	
 	
@@ -866,10 +927,8 @@ class NHP_Options{
 		
 		if(isset($field['callback']) && function_exists($field['callback'])){
 			$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
-			do_action('nhp-opts-before-field', $field, $value);
 			do_action('nhp-opts-before-field-'.$this->args['opt_name'], $field, $value);
 			call_user_func($field['callback'], $field, $value);
-			do_action('nhp-opts-after-field', $field, $value);
 			do_action('nhp-opts-after-field-'.$this->args['opt_name'], $field, $value);
 			return;
 		}
@@ -884,12 +943,10 @@ class NHP_Options{
 			
 			if(class_exists($field_class)){
 				$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
-				do_action('nhp-opts-before-field', $field, $value);
 				do_action('nhp-opts-before-field-'.$this->args['opt_name'], $field, $value);
 				$render = '';
 				$render = new $field_class($field, $value, $this);
 				$render->render();
-				do_action('nhp-opts-after-field', $field, $value);
 				do_action('nhp-opts-after-field-'.$this->args['opt_name'], $field, $value);
 			}//if
 			

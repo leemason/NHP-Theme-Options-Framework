@@ -46,7 +46,7 @@ class NHP_Options_date extends NHP_Options{
 	 * @since NHP_Options 1.0
 	*/
 	function enqueue(){
-		
+		wp_enqueue_style('nhp-opts-jquery-ui-css');
 		wp_enqueue_script(
 			'nhp-opts-field-date-js', 
 			NHP_OPTIONS_URL.'fields/date/field_date.js', 
