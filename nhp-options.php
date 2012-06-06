@@ -613,19 +613,7 @@ $sections[] = array(
 				
 				
 	$tabs = array();
-<<<<<<< HEAD:theme-options.php
-	
-	if (function_exists('wp_get_theme')){
-		$theme_data = wp_get_theme();
-		$theme_uri = $theme_data->ThemeURI;
-		$description = $theme_data->Description;
-		$author = $theme_data->Author;
-		$version = $theme_data->Version;
-		$tags = $theme_data->Tags;
-=======
-					
-					
-					
+			
 	if (function_exists('wp_get_theme')){
 		$theme_data = wp_get_theme();
 		$theme_uri = $theme_data->get('ThemeURI');
@@ -633,7 +621,6 @@ $sections[] = array(
 		$author = $theme_data->get('Author');
 		$version = $theme_data->get('Version');
 		$tags = $theme_data->get('Tags');
->>>>>>> committing v1.0.6:nhp-options.php
 	}else{
 		$theme_data = get_theme_data(trailingslashit(get_stylesheet_directory()).'style.css');
 		$theme_uri = $theme_data['URI'];
@@ -642,11 +629,7 @@ $sections[] = array(
 		$version = $theme_data['Version'];
 		$tags = $theme_data['Tags'];
 	}	
-<<<<<<< HEAD:theme-options.php
-	
-=======
 
->>>>>>> committing v1.0.6:nhp-options.php
 	$theme_info = '<div class="nhp-opts-section-desc">';
 	$theme_info .= '<p class="nhp-opts-theme-data description theme-uri">'.__('<strong>Theme URL:</strong> ', 'nhp-opts').'<a href="'.$theme_uri.'" target="_blank">'.$theme_uri.'</a></p>';
 	$theme_info .= '<p class="nhp-opts-theme-data description theme-author">'.__('<strong>Author:</strong> ', 'nhp-opts').$author.'</p>';
