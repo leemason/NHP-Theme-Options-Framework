@@ -11,7 +11,7 @@ Simply include the ```nhp-options.php``` file in your themes ```functions.php```
 get_template_part('nhp', 'options');
 ```
 
-Then change the settings as written in the **theme-options.php** file.
+Then change the settings as written in the ```nhp-options.php``` file.
 
 ## Features ##
 
