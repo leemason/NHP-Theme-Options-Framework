@@ -12,7 +12,13 @@ if ( ! class_exists('NHP_Options') ){
 	if(!defined('NHP_OPTIONS_URL')){
 		define('NHP_OPTIONS_URL', site_url(str_replace( $fslashed_abs, '', $fslashed_dir )));
 	}
-	
+		
+	if (!function_exists('__return_null')) {
+	    function __return_null() {
+	        return null;
+	    }
+	}
+		
 class NHP_Options{
 	
 	protected $framework_url = 'http://leemason.github.com/NHP-Theme-Options-Framework/';
@@ -945,6 +951,15 @@ class NHP_Options{
 				$value = (isset($this->options[$field['id']]))?$this->options[$field['id']]:'';
 				do_action('nhp-opts-before-field-'.$this->args['opt_name'], $field, $value);
 				$render = '';
+				
+				$field_defaults = array(
+					'desc' => null,
+					'class' => null,
+					'placeholder' => null
+				);
+
+				$field += $field_defaults;
+				
 				$render = new $field_class($field, $value, $this);
 				$render->render();
 				do_action('nhp-opts-after-field-'.$this->args['opt_name'], $field, $value);
