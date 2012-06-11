@@ -235,7 +235,7 @@ class NHP_Options{
 						$section['title'], 
 						$this->args['page_cap'], 
 						$this->args['page_slug'].'&tab='.$k, 
-						'__return_null'
+						create_function( '$a', "return null;" )
 				);
 					
 			}
@@ -248,7 +248,7 @@ class NHP_Options{
 						__('Import / Export', 'nhp-opts'), 
 						$this->args['page_cap'], 
 						$this->args['page_slug'].'&tab=import_export_default', 
-						'__return_null'
+						create_function( '$a', "return null;" )
 				);
 					
 			}//if
@@ -262,7 +262,7 @@ class NHP_Options{
 						$tab['title'], 
 						$this->args['page_cap'], 
 						$this->args['page_slug'].'&tab='.$k, 
-						'__return_null'
+						create_function( '$a', "return null;" )
 				);
 				
 			}
@@ -275,7 +275,7 @@ class NHP_Options{
 						__('Dev Mode Info', 'nhp-opts'), 
 						$this->args['page_cap'], 
 						$this->args['page_slug'].'&tab=dev_mode_default', 
-						'__return_null'
+						create_function( '$a', "return null;" )
 				);
 				
 			}//if
