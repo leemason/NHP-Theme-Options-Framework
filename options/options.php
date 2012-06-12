@@ -224,7 +224,7 @@ class NHP_Options{
 		if(true === $this->args['allow_sub_menu']){
 						
 			//this is needed to remove the top level menu item from showing in the submenu
-			add_submenu_page($this->args['page_slug'],$this->args['page_title'],'',$this->args['page_cap'],$this->args['page_slug'],'__return_null');
+			add_submenu_page($this->args['page_slug'],$this->args['page_title'],'',$this->args['page_cap'],$this->args['page_slug'],create_function( '$a', "return null;" ));
 						
 						
 			foreach($this->sections as $k => $section){
