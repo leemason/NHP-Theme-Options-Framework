@@ -2,6 +2,10 @@
 
 Theme options framework which uses the  [WordPress Settings API](http://codex.wordpress.org/Settings_API "WordPress Settings API"), Custom Error/Validation Handling, Custom Field/Validation Types (which are easily extendable), and import/export functionality.
 
+## Donate to the Framework ##
+
+[![Donate to the framework](https://www.paypalobjects.com/en_GB/i/btn/btn_donate_SM.gif "Donate to the framework")](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=GWS9DVBAWP4L4)
+
 ## Simple Usage ##
 
 
