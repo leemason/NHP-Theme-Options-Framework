@@ -699,11 +699,9 @@ function validate_callback_function($field, $value, $existing_value){
 	return $return;
 	
 }//function
-?>
 
-/* Displying message after theme activation Author : "Sanam Patel" */
+// Displying message after theme activation
 
-<?php
 function nhpactive_admin_head() { ?>
 
 <script type="text/javascript">
