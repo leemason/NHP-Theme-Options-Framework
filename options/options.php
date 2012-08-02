@@ -53,7 +53,7 @@ class NHP_Options{
 		$defaults['page_cap'] = 'manage_options';
 		$defaults['page_type'] = 'menu';
 		$defaults['page_parent'] = '';
-		$defaults['page_position'] = 100;
+		$defaults['page_position'] = null;
 		$defaults['allow_sub_menu'] = true;
 		
 		$defaults['show_import_export'] = true;
