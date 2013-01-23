@@ -60,7 +60,7 @@ class NHP_Options{
 		$defaults['dev_mode'] = true;
 		$defaults['stylesheet_override'] = false;
 		
-		$defaults['footer_credit'] = sprintf(__('<span id="footer-thankyou">Options Panel created using the <a href="%s" target="_blank">NHP Theme Options Framework</a> Version %s</span>',$this->framework_url,$this->framework_version), 'nhp-opts');
+		$defaults['footer_credit'] = sprintf(__('<span id="footer-thankyou">Options Panel created using the <a href="%s" target="_blank">NHP Theme Options Framework</a> Version %s</span>', 'nhp-opts'), $this->framework_url, $this->framework_version);
 		
 		$defaults['help_tabs'] = array();
 		$defaults['help_sidebar'] = __('', 'nhp-opts');
