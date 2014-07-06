@@ -1,5 +1,5 @@
 # NHP Theme Options V1.0.6 #
 
-NHP has been merged with Redux Framework to provide even better features and more community support.
+NHP Theme Options Framework has been replaced by the Fluent Framework which is coming very soon. Please direct all issues / requests to The Fluent Framework:
 
-Please direct all issues/ requests to The Redux Framework: http://reduxframework.com
+http://no-half-pixels.github.io/Fluent-Framework/
