@@ -937,7 +937,7 @@ class NHP_Options{
 			
 			$field_class = 'NHP_Options_'.$field['type'];
 			
-			if(class_exists($field_class)){
+			if(!class_exists($field_class)){
 				require_once($this->dir.'fields/'.$field['type'].'/field_'.$field['type'].'.php');
 			}//if
 			
