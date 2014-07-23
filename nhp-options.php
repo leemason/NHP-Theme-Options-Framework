@@ -699,4 +699,18 @@ function validate_callback_function($field, $value, $existing_value){
 	return $return;
 	
 }//function
+
+// Displying message after theme activation
+
+function nhpactive_admin_head() { ?>
+
+<script type="text/javascript">
+jQuery(function(){
+var message = '<p><strong>Theme Activation Successful!</strong> This theme\'s settings are located under <strong><a href="<?php echo admin_url('admin.php?page=nhp_theme_options'); ?>">Theme Options</a></strong>. You can also add some new widget from widget area <strong><a href="<?php echo admin_url('widgets.php'); ?>">Appearance > Widgets</a></strong>.</p>';
+jQuery('.themes-php #message2').html(message);
+});
+</script>
+
+<?php }
+add_action('admin_head', 'nhpactive_admin_head');
 ?>
